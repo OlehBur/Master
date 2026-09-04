@@ -1,0 +1,55 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!21 &2100000
+Material:
+  serializedVersion: 8
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: TerrainClouds_Raymarching
+  m_Shader: {fileID: 4800000, guid: 39e64d4c32cff4849b202727895acb18, type: 3}
+  m_Parent: {fileID: 0}
+  m_ModifiedSerializedProperties: 0
+  m_ValidKeywords: []
+  m_InvalidKeywords: []
+  m_LightmapFlags: 4
+  m_EnableInstancingVariants: 0
+  m_DoubleSidedGI: 0
+  m_CustomRenderQueue: -1
+  stringTagMap: {}
+  disabledShaderPasses: []
+  m_LockedProperties: 
+  m_SavedProperties:
+    serializedVersion: 3
+    m_TexEnvs: []
+    m_Ints: []
+    m_Floats:
+    - _CloudMaxDistance: 1500
+    - _CloudScale: 0.045
+    - _CloudSteps: 100
+    - _Coverage: 1
+    - _DensityMultiplier: 0.22
+    - _LightAbsorption: 20
+    - _MaxHeight: 160
+    - _MinHeight: 120
+    - _MountainHeight: 118.7
+    - _MountainScale: 0.0025
+    - _NoiseColorScale: 1
+    - _SceneShadowStrength: 1
+    - _ShadowBlur: 10
+    - _ShadowSteps: 5.2
+    - _SnowLine: 164.1
+    - _TerrainMaxDistance: 1500
+    - _TerrainMaxSteps: 128
+    - _WarpStrength: 0
+    - _WeatherScale: 0.011
+    m_Colors:
+    - _BaseColor: {r: 0.3773585, g: 0.27166763, b: 0.21181916, a: 1}
+    - _CloudColor: {r: 1, g: 0.97999996, b: 0.95, a: 1}
+    - _CloudShadowColor: {r: 0, g: 0.26077965, b: 0.46226418, a: 1}
+    - _MidColor: {r: 0.47134572, g: 0.5943396, b: 0, a: 1}
+    - _PeakColor: {r: 0.8254717, g: 0.9162264, b: 1, a: 1}
+    - _WindSpeed: {r: 1, g: 0, b: 0, a: 0}
+  m_BuildTextureStacks: []
+  m_AllowLocking: 1

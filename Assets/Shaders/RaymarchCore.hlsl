@@ -89,19 +89,94 @@
                 return 1.0 - minDist; //invert -> the center of cell is convex
             }
 
-            // math intersect woth horiz clouds lay fr MinHeight to MaxHeight
-            bool RayHorizIntersect(float3 ro, float3 rd, float minH, float maxH, out float tNear, out float tFar)
+            // TOOLS
+
+               // Генератор шуму для дитерингу (усуває розшарування)
+            float stepSizeDither(float dither) {
+                return dither * 2.0;
+           }           
+            float InterleavedGradientNoise(float2 pixCoord)
             {
-                if (abs(rd.y) < 0.0001) return false; //ray parallel to horiz
-
-                float t1 = (minH - ro.y) / rd.y;
-                float t2 = (maxH - ro.y) / rd.y;
-
-                tNear = min(t1, t2);
-                tFar = max(t1, t2);
-
-                tNear = max(tNear, 0.0); //disab calc behind cam
-                return tNear < tFar;
+                float3 magic = float3(0.06711056, 0.00583715, 52.9829189);
+                return frac(magic.z * frac(dot(pixCoord, magic.xy)));
             }
+
+    // GEOMETRY & INTERSECTION
+bool RayHorizIntersect(float3 ro, float3 rd, float minH, float maxH, out float tNear, out float tFar)
+{
+    if (abs(rd.y) < 0.0001) return false;
+
+    float t1 = (minH - ro.y) / rd.y;
+    float t2 = (maxH - ro.y) / rd.y;
+
+    tNear = min(t1, t2);
+    tFar = max(t1, t2);
+
+    tNear = max(tNear, 0.0);
+    return tNear < tFar;
+}
+
+//// --- Shared Terrain Functions ---
+//float GetTerrainHeight(float2 p, float mountainScale, float mountainHeight)
+//{
+//    float h = 0.0;
+//    float amp = 1.0;
+//    float freq = mountainScale;
+
+//    for (int i = 0; i < 5; i++)
+//    {
+//        float n = 1.0 - abs(Noise3D(float3(p * freq, 0.0)) * 2.0 - 1.0);
+//        h += n * n * amp;
+//        freq *= 2.1;
+//        amp *= 0.45;
+//    }
+//    return h * mountainHeight;
+//}
+
+//float3 GetTerrainNormal(float3 p, float mountainScale, float mountainHeight)
+//{
+//    float e = 0.5;
+//    return normalize(float3(
+//        GetTerrainHeight(p.xz - float2(e, 0), mountainScale, mountainHeight) - GetTerrainHeight(p.xz + float2(e, 0), mountainScale, mountainHeight),
+//        2.0 * e,
+//        GetTerrainHeight(p.xz - float2(0, e), mountainScale, mountainHeight) - GetTerrainHeight(p.xz + float2(0, e), mountainScale, mountainHeight)
+//    ));
+//}
+
+//// Повертає відстань до гори вздовж променя (або -1.0 якщо влучання немає)
+//float TerrainRayIntersect(float3 ro, float3 rd, float maxDist, float mountainScale, float mountainHeight)
+//{
+//    float t = 0.0;
+//    float stepSize = 4.0;
+//    int steps = 64;
+
+//    for (int i = 0; i < steps; i++)
+//    {
+//        float3 p = ro + rd * t;
+//        float h = GetTerrainHeight(p.xz, mountainScale, mountainHeight);
+//        float diff = p.y - h;
+
+//        if (diff < 0.5)
+//        {
+//            // Уточнення бінарним пошуком
+//            float tMin = max(0.0, t - stepSize);
+//            float tMax = t;
+//            for (int j = 0; j < 4; j++)
+//            {
+//                float tMid = (tMin + tMax) * 0.5;
+//                float3 midP = ro + rd * tMid;
+//                if (midP.y < GetTerrainHeight(midP.xz, mountainScale, mountainHeight))
+//                    tMax = tMid;
+//                else
+//                    tMin = tMid;
+//            }
+//            return tMax;
+//        }
+
+//        t += max(stepSize, diff * 0.4);
+//        if (t > maxDist) break;
+//    }
+//    return -1.0;
+//}
 
 #endif
