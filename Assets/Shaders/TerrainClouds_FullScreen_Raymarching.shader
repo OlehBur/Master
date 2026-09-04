@@ -36,6 +36,8 @@ Shader "Custom/FullScreen_TerrainClouds_Raymarching"
         _CloudShadowColor ("Shadow Color", Color) = (0.3, 0.35, 0.45, 1.0)
         _LightAbsorption ("Light Absorption", Float) = 0.8
         _SceneShadowStrength ("Ground Shadow Strength", Range(0, 1)) = 0.7
+        _SilverLiningIntensity ("Silver Lining Intensity", Range(0, 10)) = 3.0
+        _SilverLiningSpread ("Silver Lining Spread (g)", Range(0.1, 0.99)) = 0.75
     }
     SubShader
     {
@@ -85,10 +87,13 @@ Shader "Custom/FullScreen_TerrainClouds_Raymarching"
             float _ShadowBlur;
             float4 _CloudShadowColor;
             float _LightAbsorption;
+            float _SilverLiningIntensity;
+            float _SilverLiningSpread;
             float4 _CloudColor;
             float4 _WindSpeed;
             float _CloudMaxDistance;
             float _SceneShadowStrength;
+
 
             struct FragOutput
             {
@@ -278,7 +283,7 @@ Shader "Custom/FullScreen_TerrainClouds_Raymarching"
                 float maxSceneDist = distance(sceneWorldPos, rayOrigin);
 
                 float4 sceneColor = SAMPLE_TEXTURE2D(_BlitTexture, sampler_LinearClamp, uv);
-                float dither = InterleavedGradientNoise(input.positionCS.xy);
+                float dither =InterleavedGradientNoise(input.positionCS.xy);
 
                 // ==========================================
                 // ÊÐÎÊ 1: Ðåéìàð÷èíã Ã³ð (Terrain)
@@ -367,6 +372,9 @@ Shader "Custom/FullScreen_TerrainClouds_Raymarching"
                 float3 accumulatedLight = 0.0;
                 float currentT = tEntry + stepSize * dither;
 
+                float cosTheta = dot(rayDir, lightDir);
+                float phase = HenyeyGreenstein(cosTheta, _SilverLiningSpread) * _SilverLiningIntensity;
+
                 for (int i = 0; i < maxCloudSteps; i++)
                 {
                     if (currentT >= tExit) break;
@@ -382,7 +390,8 @@ Shader "Custom/FullScreen_TerrainClouds_Raymarching"
                         float stepAlpha = 1.0 - stepTransmittance;
 
                         float lightTransmittance = LightMarch(currentPos, lightDir);
-                        float3 cloudColorSample = lerp(_CloudShadowColor.rgb, _CloudColor.rgb, lightTransmittance);
+                        //float3 cloudColorSample = lerp(_CloudShadowColor.rgb, _CloudColor.rgb, lightTransmittance);
+                        float3 cloudColorSample = lerp(_CloudShadowColor.rgb, _CloudColor.rgb * (1.0 + phase), lightTransmittance);//with silverLine
 
                         accumulatedLight += cloudColorSample * stepAlpha * accumulatedTransmittance;
                         accumulatedTransmittance *= stepTransmittance;

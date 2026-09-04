@@ -101,6 +101,13 @@
                 return frac(magic.z * frac(dot(pixCoord, magic.xy)));
             }
 
+            //silver lines for clouds
+            float HenyeyGreenstein(float cosTheta, float g)
+{
+    float g2 = g * g;
+    return (1.0 - g2) / (4.0 * 3.14159265 * pow(max(0.001, 1.0 + g2 - 2.0 * g * cosTheta), 1.5));
+}
+
     // GEOMETRY & INTERSECTION
 bool RayHorizIntersect(float3 ro, float3 rd, float minH, float maxH, out float tNear, out float tFar)
 {
