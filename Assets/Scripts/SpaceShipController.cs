@@ -5,7 +5,7 @@ using UnityEngine.InputSystem;
 public class SpaceshipController : MonoBehaviour {
     [Header("Movement")]
     [SerializeField] float mainThrust = 50f;
-    [SerializeField] float strafeThrust = 30f;
+    //[SerializeField] float strafeThrust = 30f;
     [SerializeField] float verticalThrust = 30f;
 
     [Header("Rot")]
@@ -69,7 +69,7 @@ public class SpaceshipController : MonoBehaviour {
         propellerR.Rotate(Vector3.up * VerticalProgression * propellersSpeed * Time.deltaTime);
         engineRotableL.Rotate(Vector3.right * ForwardProgression * rotablesSpeed * Time.deltaTime);
         engineRotableR.Rotate(Vector3.right * ForwardProgression * rotablesSpeed * Time.deltaTime);
-        Debug.Log(ForwardProgression * rotablesSpeed + ", " + VerticalProgression * propellersSpeed);
+        //Debug.Log(ForwardProgression * rotablesSpeed + ", " + VerticalProgression * propellersSpeed);
     }
 
     private void FixedUpdate() {

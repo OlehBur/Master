@@ -16,7 +16,7 @@ Material:
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
-  m_CustomRenderQueue: -1
+  m_CustomRenderQueue: 2002
   stringTagMap: {}
   disabledShaderPasses: []
   m_LockedProperties: 
@@ -25,33 +25,41 @@ Material:
     m_TexEnvs: []
     m_Ints: []
     m_Floats:
+    - _AmbientLightIntensity: 0.097
     - _CloudMaxDistance: 409.6
-    - _CloudScale: 0.0683
-    - _CloudSteps: 61
+    - _CloudScale: 0.0497
+    - _CloudSteps: 44.4
+    - _CloudWarp: 0
     - _Coverage: 1
-    - _DensityMultiplier: 0.43
+    - _DensityMultiplier: 0.376
+    - _DetailNoiseScale: 2
+    - _DetailNoiseStrength: 0.255
+    - _Dithering: 1
+    - _DomainWarp: 0
     - _LightAbsorption: 20
-    - _MaxHeight: 170
-    - _MinHeight: 140
-    - _MountainHeight: 118.7
-    - _MountainScale: 0.0025
+    - _MaxHeight: 120
+    - _MinHeight: 80
+    - _MountainHeight: 62.5
+    - _MountainScale: 0.0101
     - _NoiseColorScale: 1
     - _SceneShadowStrength: 1
-    - _ShadowBlur: 10
-    - _ShadowSteps: 4.79
-    - _SilverLiningIntensity: 1.96
+    - _ShadowBlur: 1.29
+    - _ShadowSteps: 2.34
+    - _SilverLiningIntensity: 6.73
     - _SilverLiningSpread: 0.99
-    - _SnowLine: 164.1
-    - _TerrainMaxDistance: 774.93
-    - _TerrainMaxSteps: 74
+    - _SnowLine: 85.3
+    - _TerrainMaxDistance: 347.9
+    - _TerrainMaxSteps: 49
+    - _TerrainWarp: 0
     - _WarpStrength: 0
-    - _WeatherScale: 0.014
+    - _WeatherScale: 0.0076
     m_Colors:
     - _BaseColor: {r: 0.3773585, g: 0.27166763, b: 0.21181916, a: 1}
-    - _CloudColor: {r: 1, g: 0.97999996, b: 0.95, a: 1}
-    - _CloudShadowColor: {r: 0, g: 0.26077965, b: 0.46226418, a: 1}
+    - _CloudColor: {r: 1, g: 1, b: 1, a: 1}
+    - _CloudShadowColor: {r: 0, g: 0.15727174, b: 0.41509432, a: 1}
+    - _MeshShadowColor: {r: 0, g: 0.08598912, b: 0.31132078, a: 1}
     - _MidColor: {r: 0.47134572, g: 0.5943396, b: 0, a: 1}
     - _PeakColor: {r: 0.8254717, g: 0.9162264, b: 1, a: 1}
-    - _WindSpeed: {r: 0, g: 0, b: 0.1, a: 0}
+    - _WindSpeed: {r: 0, g: 0, b: 0, a: 0}
   m_BuildTextureStacks: []
   m_AllowLocking: 1

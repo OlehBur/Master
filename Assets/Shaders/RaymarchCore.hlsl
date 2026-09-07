@@ -91,14 +91,15 @@
 
             // TOOLS
 
-               // Генератор шуму для дитерингу (усуває розшарування)
+               // dithering for raymarching
             float stepSizeDither(float dither) {
                 return dither * 2.0;
            }           
             float InterleavedGradientNoise(float2 pixCoord)
             {
-                float3 magic = float3(0.06711056, 0.00583715, 52.9829189);
-                return frac(magic.z * frac(dot(pixCoord, magic.xy)));
+                //Jorge Jimenez's constants for the 2D screen. They are calculated through the golden ratio 
+                float3 constants = float3(0.06711056, 0.00583715, 52.9829189);
+                return frac(constants.z * frac(dot(pixCoord, constants.xy)));
             }
 
             //silver lines for clouds
