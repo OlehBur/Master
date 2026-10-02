@@ -55,7 +55,7 @@ Material:
     - _WeatherScale: 0.0076
     m_Colors:
     - _BaseColor: {r: 0.3773585, g: 0.27166763, b: 0.21181916, a: 1}
-    - _CloudColor: {r: 0.9575472, g: 1, b: 0.9995711, a: 1}
+    - _CloudColor: {r: 0.9669811, g: 1, b: 0.9960222, a: 1}
     - _CloudShadowColor: {r: 0, g: 0.15727174, b: 0.41509432, a: 1}
     - _MeshShadowColor: {r: 0, g: 0.08598912, b: 0.31132078, a: 1}
     - _MidColor: {r: 0.47134572, g: 0.5943396, b: 0, a: 1}

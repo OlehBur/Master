@@ -40,7 +40,7 @@ Shader "Custom/FullScreen_WaterClouds_Raymarching"
         _SeaWaterFogDensity ("Underwater Fog Density", Range(0.001, 0.1)) = 0.015
         
         [Header(Underwater Surface Controls)]
-        _UnderSnellSize ("Underwater Window Size (Snell Radius)", Range(0.5, 4.0)) = 2.0
+        _UnderSnellSize ("Underwater Window Size (Snell Radius)", Range(0.5, 10.0)) = 10.0
         _UnderFoamCoverage ("Underwater Wave Foam Amount (Coverage)", Range(0.0, 1.0)) = 0.15
         _UnderFoamIntensity ("Underwater Wave Foam Brightness", Range(0, 10)) = 2.0
 
