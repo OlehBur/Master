@@ -3,7 +3,42 @@ guid: ade71fab4d04e0a419c296eb2d4e4d19
 ModelImporter:
   serializedVersion: 24300
   internalIDToNameTable: []
-  externalObjects: {}
+  externalObjects:
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: baseMetal
+    second: {fileID: 2100000, guid: 463bf05122efc194281340020064d3a2, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: darkMetal
+    second: {fileID: 2100000, guid: bc83d30b0f618354eb225dff529e8e2a, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: glass
+    second: {fileID: 2100000, guid: 1b19ffd07a276ca40af358e38ea566b7, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: grayMetal
+    second: {fileID: 2100000, guid: 14452a1158a80514c9712ddaed6991b8, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: grayOrangeMetal
+    second: {fileID: 2100000, guid: 18448cb33e1253249a401c8572247cf8, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: shield
+    second: {fileID: 2100000, guid: 585dac150d23a9b4db821668454717f9, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: violetMetal
+    second: {fileID: 2100000, guid: 986ffa716801dd54b9fd64bed75067c7, type: 2}
   materials:
     materialImportMode: 2
     materialName: 0

@@ -1,0 +1,65 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!21 &2100000
+Material:
+  serializedVersion: 8
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: TerrainClouds_Raymarching
+  m_Shader: {fileID: 4800000, guid: 39e64d4c32cff4849b202727895acb18, type: 3}
+  m_Parent: {fileID: 0}
+  m_ModifiedSerializedProperties: 0
+  m_ValidKeywords: []
+  m_InvalidKeywords: []
+  m_LightmapFlags: 4
+  m_EnableInstancingVariants: 0
+  m_DoubleSidedGI: 0
+  m_CustomRenderQueue: 2002
+  stringTagMap: {}
+  disabledShaderPasses: []
+  m_LockedProperties: 
+  m_SavedProperties:
+    serializedVersion: 3
+    m_TexEnvs: []
+    m_Ints: []
+    m_Floats:
+    - _AmbientLightIntensity: 0.097
+    - _CloudMaxDistance: 409.6
+    - _CloudScale: 0.0497
+    - _CloudSteps: 44.4
+    - _CloudWarp: 0
+    - _Coverage: 1
+    - _DensityMultiplier: 0.376
+    - _DetailNoiseScale: 2
+    - _DetailNoiseStrength: 0.255
+    - _Dithering: 1
+    - _DomainWarp: 0
+    - _LightAbsorption: 20
+    - _MaxHeight: 120
+    - _MinHeight: 80
+    - _MountainHeight: 62.5
+    - _MountainScale: 0.0101
+    - _NoiseColorScale: 1
+    - _SceneShadowStrength: 1
+    - _ShadowBlur: 1.29
+    - _ShadowSteps: 2.34
+    - _SilverLiningIntensity: 10
+    - _SilverLiningSpread: 0.99
+    - _SnowLine: 85.3
+    - _TerrainMaxDistance: 347.9
+    - _TerrainMaxSteps: 49
+    - _TerrainWarp: 0
+    - _WarpStrength: 0
+    - _WeatherScale: 0.0076
+    m_Colors:
+    - _BaseColor: {r: 0.3773585, g: 0.27166763, b: 0.21181916, a: 1}
+    - _CloudColor: {r: 0.9669811, g: 1, b: 0.9960222, a: 1}
+    - _CloudShadowColor: {r: 0, g: 0.15727174, b: 0.41509432, a: 1}
+    - _MeshShadowColor: {r: 0, g: 0.08598912, b: 0.31132078, a: 1}
+    - _MidColor: {r: 0.47134572, g: 0.5943396, b: 0, a: 1}
+    - _PeakColor: {r: 0.8254717, g: 0.9162264, b: 1, a: 1}
+    - _WindSpeed: {r: 0, g: 0, b: 0, a: 0}
+  m_BuildTextureStacks: []
+  m_AllowLocking: 1
