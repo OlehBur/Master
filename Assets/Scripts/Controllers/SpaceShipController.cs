@@ -51,15 +51,6 @@ public class SpaceshipController : MonoBehaviour {
         _rb.angularDamping = angularDrag;
     }
 
-    //private void OnEnable() {
-    //    Debug.Log("TODO: unclock cursor in UI, lock in play hud");
-
-    //}
-
-    //private void OnDisable() {
-
-    //}
-
     private void Start() {
         _menuService.OnStateChanged += ChangeControlActivation;
         ChangeControlActivation(_menuService.IsOpen);

@@ -1,36 +1,40 @@
-using Unity.VisualScripting;
 using UnityEngine;
 using VContainer;
 
 
 public class EngineController : MonoBehaviour {
-    //[SerializeField] ParticleSystem fireParticle;
-    [SerializeField] ParticleSystem bubbleParticle;
+    //[SerializeField] GameObject fireParticle;
+    [SerializeField] GameObject bubbleParticle;
 
-    [Inject] private readonly IShaderService _shaderService;
+    [Inject] private readonly IShaderpassService _shaderService;
 
-    //void Start()
-    //{
-    //if(MainManager.Instance != null) 
-    //MainManager.Instance.OnShaderChanged+=
+    //void Start() {
+    //    _shaderService.OnShaderChanged += ChangeParticles;
     //}
 
-    void Update() {
+    //void ChangeParticles(ShaderType type) {
+    //    if (type == ShaderType.Ocean) {
+    //        bool isOverOcean = transform.position.y > _shaderService.GetOceanLevel();
+
+    //        //fireParticle.SetActive(isOverOcean);
+    //        bubbleParticle.SetActive(!isOverOcean);
+    //    }
+    //    else {
+    //        //fireParticle.SetActive(true);
+    //        bubbleParticle.SetActive(false);
+    //    }
+    //}
+
+    private void Update() {
         if (_shaderService.CurrentShader == ShaderType.Ocean) {
             bool isOverOcean = transform.position.y > _shaderService.GetOceanLevel();
 
-            //fireParticle.gameObject.SetActive(isOverOcean);
-            bubbleParticle.gameObject.SetActive(!isOverOcean);
+            //fireParticle.SetActive(isOverOcean);
+            bubbleParticle.SetActive(!isOverOcean);
         }
         else {
-            //fireParticle.gameObject.SetActive(true);
-            bubbleParticle.gameObject.SetActive(false);
+            //fireParticle.SetActive(true);
+            bubbleParticle.SetActive(false);
         }
     }
-
-    //public void set(float value) {
-    //    if (oceanMaterial != null) {
-    //        oceanMaterial.SetFloat(OceanLevelID, value);
-    //    }
-    //}
 }

@@ -13,12 +13,10 @@ public enum ShaderType {
 public class MainMenuController : MonoBehaviour {
     [SerializeField] InputActionReference escapeAction;
     [SerializeField] GameObject mainMenu;
-    //public static MainManager Instance { get; private set; }
 
-    [Inject] private readonly IShaderService _shaderService;
+    [Inject] private readonly IShaderpassService _shaderService;
     [Inject] private readonly MenuService _menuService;
-
-    //public bool IsMainMenuActive { get; private set; } = false;
+    [Inject] private readonly ShaderReadPropertiesService _shaderReaderService;
 
 
     private void OnEnable() {
@@ -35,11 +33,10 @@ public class MainMenuController : MonoBehaviour {
     private void Start() {
         _menuService.OnStateChanged += OnMenuStateChanged;
         OnMenuStateChanged(_menuService.IsOpen);
+        //_shaderReaderService.InspectShaderProperties(ShaderType.Terrain);
     }
 
     void OnMenu(InputAction.CallbackContext ctx) {
-        //mainMenu.SetActive(!mainMenu.activeSelf);
-        //IsMainMenuActive = mainMenu.activeSelf;
         _menuService.Toggle();
     }
 

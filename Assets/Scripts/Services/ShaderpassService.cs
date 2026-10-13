@@ -3,7 +3,7 @@ using UnityEngine;
 using UnityEngine.Rendering.Universal;
 
 
-public interface IShaderService {
+public interface IShaderpassService {
     ShaderType CurrentShader { get; }
     event Action<ShaderType> OnShaderChanged;
     void ActivateShader(ShaderType type);
@@ -11,7 +11,7 @@ public interface IShaderService {
     float GetOceanLevel();
 }
 
-public class ShaderService : IShaderService {
+public class ShaderpassService : IShaderpassService {
     private readonly UniversalRendererData _rendererData;
     private readonly Material _oceanMaterial;
 
@@ -26,7 +26,7 @@ public class ShaderService : IShaderService {
     private static readonly int OCEAN_LEVEL_ID = Shader.PropertyToID("_SeaLevel");
 
 
-    public ShaderService(UniversalRendererData rendererData, Material oceanMaterial) {
+    public ShaderpassService(UniversalRendererData rendererData, Material oceanMaterial) {
         _rendererData = rendererData;
         _oceanMaterial = oceanMaterial;
     }
@@ -47,19 +47,6 @@ public class ShaderService : IShaderService {
 
         return 0f;
     }
-
-    //void ActivateSelectedFeature() {
-    //    if (CurrentShader == ShaderType.None) {
-    //        Debug.LogWarning("None Shader activation");
-    //        return;
-    //    }
-
-    //    string featureName = GetFeatureName(CurrentShader);
-
-    //    DisableAllPasses();
-    //    ToggleFeatureByName(featureName, true);
-    //    OnShaderChanged?.Invoke(CurrentShader);
-    //}
 
     string GetFeatureName(ShaderType type) =>
         type switch {
