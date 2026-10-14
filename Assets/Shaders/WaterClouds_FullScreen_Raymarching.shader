@@ -1,62 +1,73 @@
-Shader "Custom/FullScreen_WaterClouds_Raymarching"
+ï»¿Shader "Custom/FullScreen_WaterClouds_Raymarching"
 {
     Properties
     {
+        [HideInInspector] _Header_General ("---{GENERAL}---", Float) = 0
         [Header(____________________________GENERAL_______________________________)]
-        _MeshShadowColor ("Mesh Shadow Tint Color", Color) = (0.25, 0.3, 0.4, 1.0)
-        _AmbientLightIntensity ("Ambient Light Intensity", Range(0, 1)) = 0.15
-        
-        [Header(____________________________CLOUDS_______________________________)]
-        [Header(Cloud March)]
-        _CloudSteps ("Cloud March Steps", Range(16, 128)) = 48
-        _ShadowSteps ("Shadow March Steps", Range(1, 8)) = 3
-        _CloudMaxDistance ("Cloud Fade Distance", Float) = 1200.0
-        _CloudScale ("Cloud Micro Scale", Range(0.0001, 0.1)) = 0.03
+        _MeshShadowColor ("Mesh Shadow Tint Color", Color) = (0.0, 0.17, 0.45, 1.0)
+        _AmbientLightIntensity ("Ambient Light Intensity", Range(0, 1)) = 0.15        
         _Dithering ("Dithering Strength", Range(0, 1)) = 1.0
-
-        [Header(Cloud Shaping)]
-        _MinHeight ("Min Cloud Height (Y)", Float) = 120.0
-        _MaxHeight ("Max Cloud Height (Y)", Float) = 220.0
-        _WindSpeed ("Wind Speed", Vector) = (0.2, 0.0, 0.1, 0.0)
-        _WeatherScale ("Weather Macro Scale", Range(0.001, .1)) = 0.003
-        _CloudWarp ("Turbulence (Warp)", Range(0, 100)) = 1.5
-        _Coverage ("Cloud Coverage", Range(0, 1)) = 0.5   
         
-        [Header(Cloud Lighting)]
-        _DensityMultiplier ("Cloud Density / Opacity", Range(0, 1)) = 0.4
-        _CloudColor ("Sunlit Cloud Color", Color) = (1.0, 0.98, 0.95, 1.0)
-        _LightAbsorption ("Light Absorption", Range(0.1, 20)) = 0.8
-        _SilverLiningIntensity ("Silver Lining Intensity", Range(0, 10)) = 3.0
-        _SilverLiningSpread ("Silver Lining Spread", Range(0.1, 0.99)) = 0.75
-        _CloudShadowColor ("Shadow Color", Color) = (0.3, 0.35, 0.45, 1.0)
-        _SceneShadowStrength ("Ground Shadow Strength", Range(0, 1)) = 0.7
-        _ShadowBlur ("Shadow Softness Blur", Range(0.1, 10.0)) = 4.0
-
-        [Header(____________________________WATER_______________________________)]
+        
+        [HideInInspector] _Header_Ocean ("---{OCEAN}---", Float) = 0
+        [HideInInspector] _Header_OceanLvl ("Ocean Level and Clarity", Float) = 0
+        [Header(____________________________OCEAN_______________________________)]
         [Header(Water Level and Clarity)]
-        _SeaLevel ("Sea Level (Y Height)", Float) = 0.0
-        _SeaTransparency ("Underwater Clarity / Depth Transparency", Range(0.001, 0.5)) = 0.05
-        _SeaColorDepth ("Color Depth Gradient Distance", Float) = 12.0
+        _SeaLevel ("Sea Level (Y Height)", Float) = 25.0
+        _SeaTransparency ("Underwater Clarity / Depth Transparency", Range(0.001, 0.5)) = 0.0151
+        _SeaColorDepth ("Color Depth Gradient Distance", Float) = 50.0
         _SeaWaterFogDensity ("Underwater Fog Density", Range(0.001, 0.1)) = 0.015
         
+        [HideInInspector] _Header_Underwater ("Underwater Surface Controls", Float) = 0
         [Header(Underwater Surface Controls)]
         _UnderSnellSize ("Underwater Window Size (Snell Radius)", Range(0.5, 10.0)) = 10.0
-        _UnderFoamCoverage ("Underwater Wave Foam Amount (Coverage)", Range(0.0, 1.0)) = 0.15
-        _UnderFoamIntensity ("Underwater Wave Foam Brightness", Range(0, 10)) = 2.0
-
+        _UnderFoamCoverage ("Underwater Wave Foam Amount (Coverage)", Range(0.0, 1.0)) = 0.339
+        _UnderFoamIntensity ("Underwater Wave Foam Brightness", Range(0, 10)) = 1.15
+        
+        [HideInInspector] _Header_OceanMarch ("Ocean March", Float) = 0
         [Header(Water March)]
         _SeaMaxSteps ("Sea Raymarch Steps", Range(16, 256)) = 80
-        _SeaMaxDistance ("Sea Render Distance", Float) = 1500.0
+        _SeaMaxDistance ("Sea Render Distance", Float) = 400.0
         
+        [HideInInspector] _Header_WavesShape ("Ocean Shape", Float) = 0
         [Header(Water Shape)]
-        _SeaHeight ("Sea Wave Height", Float) = 0.6
-        _SeaChoppy ("Sea Choppiness", Range(1.0, 10.0)) = 4.0
-        _SeaFreq ("Sea Wave Frequency", Range(0.01, 1.0)) = 0.16
-        _SeaSpeed ("Sea Animation Speed", Range(0.1, 5.0)) = 0.8
-
+        _SeaHeight ("Sea Wave Height", Float) = 0.5
+        _SeaChoppy ("Sea Choppiness", Range(1.0, 10.0)) = 5.337
+        _SeaFreq ("Sea Wave Frequency", Range(0.01, 1.0)) = 0.1412
+        _SeaSpeed ("Sea Animation Speed", Range(0.1, 5.0)) = 0.76
+        
+        [HideInInspector] _Header_OceanColor ("Ocean Colors", Float) = 0
         [Header(Water Colors)]
-        _SeaBaseColor ("Sea Deep Base Color", Color) = (0.05, 0.12, 0.22, 1.0)
-        _SeaWaterColor ("Sea Shallow / SSS Color", Color) = (0.2, 0.55, 0.5, 1.0)
+        _SeaBaseColor ("Sea Deep Base Color", Color) = (0.0, 0.1, 0.25, 1.0)
+        _SeaWaterColor ("Sea Shallow / SSS Color", Color) = (0.0, 0.62, 0.65, 1.0)
+
+        [HideInInspector] _Header_Clouds ("---{CLOUDS}---", Float) = 0
+        [HideInInspector] _Header_ClMarch ("Clouds March", Float) = 0
+        [Header(____________________________CLOUDS_______________________________)]        [Header(Cloud March)]
+        _CloudSteps ("Cloud March Steps", Range(16, 128)) = 35
+        _ShadowSteps ("Shadow March Steps", Range(1, 8)) = 2
+        _CloudMaxDistance ("Cloud Fade Distance", Float) = 350.0
+        _CloudScale ("Cloud Micro Scale", Range(0.0001, 0.1)) = 0.0747
+        
+        [HideInInspector] _Header_ClShape ("Clouds Shaping", Float) = 0
+        [Header(Cloud Shaping)]
+        _MinHeight ("Min Cloud Height (Y)", Float) = 65.0
+        _MaxHeight ("Max Cloud Height (Y)", Float) = 90.0
+        _WindSpeed ("Wind Speed", Vector) = (1.0, 0.0, 0.0, 0.0)
+        _WeatherScale ("Weather Macro Scale", Range(0.001, .1)) = 0.0067
+        _CloudWarp ("Turbulence (Warp)", Range(0, 100)) = 15.5
+        _Coverage ("Cloud Coverage", Range(0, 1)) = 1.0   
+        
+        [HideInInspector] _Header_ClLight ("Clouds Light", Float) = 0
+        [Header(Cloud Lighting)]
+        _DensityMultiplier ("Cloud Density / Opacity", Range(0, 1)) = 0.477
+        _CloudColor ("Sunlit Cloud Color", Color) = (1.0, 0.98, 0.95, 1.0)
+        _LightAbsorption ("Light Absorption", Range(0.1, 20)) = 20.0
+        _SilverLiningIntensity ("Silver Lining Intensity", Range(0, 10)) = 1.15
+        _SilverLiningSpread ("Silver Lining Spread", Range(0.1, 0.99)) = 0.949
+        _CloudShadowColor ("Shadow Color", Color) = (0.0, 0.1477988, 0.4433962, 1.0)
+        _SceneShadowStrength ("Ground Shadow Strength", Range(0, 1)) = 0.581
+        _ShadowBlur ("Shadow Softness Blur", Range(0.1, 10.0)) = 0.1
     }
     SubShader
     {
@@ -513,7 +524,7 @@ Shader "Custom/FullScreen_WaterClouds_Raymarching"
                 bool camIsUnderwater = (MapWater(rayOrigin, 3) < 0.0);
 
                 // ====================================================
-                // Ã²ËÊÀ 1: ÊÀÌÅÐÀ ÍÀÄ ÂÎÄÎÞ
+                // Cam above Water
                 // ====================================================
                 if (!camIsUnderwater)
                 {
@@ -586,7 +597,7 @@ Shader "Custom/FullScreen_WaterClouds_Raymarching"
                     return output;
                 }
                 // ====================================================
-                // Ã²ËÊÀ 2: ÊÀÌÅÐÀ Ï²Ä ÂÎÄÎÞ
+                // cam below water
                 // ====================================================
                 else
                 {
@@ -619,7 +630,7 @@ Shader "Custom/FullScreen_WaterClouds_Raymarching"
                         {
                             float cosTheta = saturate(dot(rayDir, float3(0, 1, 0)));
 
-                            // 1. Êîíòðîëü ðàä³óñó Â³êíà Ñíåëëà (_UnderSnellSize)
+                            // Snell Window Radius Control (_UnderSnellSize)
                             float snellEdgeMin = saturate(0.55 / max(0.01, _UnderSnellSize));
                             float snellEdgeMax = saturate(0.72 / max(0.01, _UnderSnellSize));
 
@@ -627,7 +638,7 @@ Shader "Custom/FullScreen_WaterClouds_Raymarching"
                             float tir = 1.0 - smoothstep(snellEdgeMin, snellEdgeMax, cosTheta);
                             fresnelUnder = max(fresnelUnder, tir);
 
-                            // 2. Ïîð³ã òà ïëîùà ïîêðèòòÿ ï³íîþ (_UnderFoamCoverage)
+                            // Threshold and area of â€‹â€‹foam coverage (_UnderFoamCoverage)
                             float relY = hitPos.y - _SeaLevel;
                             float foamThreshold = lerp(_SeaHeight * 0.95, -0.2 * _SeaHeight, _UnderFoamCoverage);
                             float waveFoam = smoothstep(foamThreshold, _SeaHeight, relY);

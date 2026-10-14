@@ -26,47 +26,54 @@ Material:
     m_Ints: []
     m_Floats:
     - _DiskSteps: 5
-    - _GlowIntensity: 5
-    - _LensingStrength: 2
-    - _MaxRaySteps: 256
-    - _MeteorCount: 20
-    - _MeteorSpeed: 0.93
-    - _NebulaIntensity: 0.25
-    - _NebulaScale: 4.16
-    - _PlanetCragScale: 1.94
-    - _PlanetRadius: 150
-    - _PlanetSharpness: 0.039
-    - _PlanetTwist: 7.67
-    - _Size: 10.1
+    - _GlowIntensity: 1
+    - _Header_Asteroids: 0
+    - _Header_Disk: 0
+    - _Header_Hole: 0
+    - _Header_Nebula: 0
+    - _Header_Planet: 0
+    - _Header_Stars: 0
+    - _Header_Sun: 0
+    - _LensingStrength: 1
+    - _MaxRaySteps: 96
+    - _MeteorCount: 8
+    - _MeteorSpeed: 2
+    - _NebulaIntensity: 1.5
+    - _NebulaScale: 1.5
+    - _PlanetCragScale: 2.5
+    - _PlanetRadius: 4.5
+    - _PlanetSharpness: 0.14
+    - _PlanetTwist: 2.5
+    - _Size: 0.05
     - _Speed: 5
-    - _StarBrightness: 11.7
+    - _StarBrightness: 3
     - _StarDensity: 0.05
-    - _StarScale: 602
-    - _StarThreshold: 0.993
-    - _SunBrightness: 4.4
-    - _SunCoronaSize: 0.224
-    - _SunNoiseScale: 14.2
-    - _SunRayCnt: 64
+    - _StarScale: 300
+    - _StarThreshold: 0.96
+    - _SunBrightness: 4
+    - _SunCoronaSize: 0.2
+    - _SunNoiseScale: 8
+    - _SunRayCnt: 16
     - _SunRayCount: 16
-    - _SunRaySpeed: 2
-    - _SunSize: 0.11
-    - _SunTurbulenceSpeed: 1.91
+    - _SunRaySpeed: 0.15
+    - _SunSize: 0.08
+    - _SunTurbulenceSpeed: 0.12
     m_Colors:
     - _BHScale: {r: 1, g: 1, b: 1, a: 1}
-    - _BlackHolePos: {r: 0, g: -59.23, b: 0, a: 0}
-    - _DiskInnerColor: {r: 1, g: 0.8228364, b: 0.19339621, a: 1}
-    - _DiskOuterColor: {r: 1, g: 0.36335683, b: 0, a: 1}
-    - _GlowColor: {r: 1, g: 1, b: 1, a: 1}
-    - _MeteorColor: {r: 0.6886792, g: 0.5673688, b: 0, a: 1}
-    - _NebulaColor1: {r: 0.2059003, g: 0, b: 0.6320754, a: 1}
-    - _NebulaColor2: {r: 0.057630494, g: 0.05446778, b: 0.2264151, a: 1}
-    - _NebulaColor3: {r: 0.6981132, g: 0.10208259, b: 0.10208259, a: 1}
-    - _PlanetDarkColor: {r: 0.01, g: 0.049999982, b: 0.17999998, a: 1}
+    - _BlackHolePos: {r: 0, g: 0, b: 0, a: 0}
+    - _DiskInnerColor: {r: 1, g: 0.8, b: 0, a: 1}
+    - _DiskOuterColor: {r: 0.5, g: 0.13, b: 0.02, a: 1}
+    - _GlowColor: {r: 1.2, g: 1.1, b: 1, a: 1}
+    - _MeteorColor: {r: 1, g: 0.55, b: 0.2, a: 1}
+    - _NebulaColor1: {r: 0.05, g: 0.02, b: 0.2, a: 1}
+    - _NebulaColor2: {r: 0.8, g: 0.15, b: 0.55, a: 1}
+    - _NebulaColor3: {r: 0.1, g: 0.65, b: 0.95, a: 1}
+    - _PlanetDarkColor: {r: 0.01, g: 0.05, b: 0.18, a: 1}
     - _PlanetDir: {r: 0.1, g: 0.15, b: 0.75, a: 0}
-    - _PlanetIceColor: {r: 0.19999996, g: 0.8, b: 1, a: 1}
-    - _PlanetPos: {r: -653.94, g: -104.18, b: 0, a: 0}
-    - _SunCoreColor: {r: 0.6685701, g: 0.5801887, b: 1, a: 1}
-    - _SunCoronaColor: {r: 1, g: 0.4251413, b: 0, a: 1}
-    - _SunSurfaceColor: {r: 1, g: 0.55, b: 0, a: 1}
+    - _PlanetIceColor: {r: 0.2, g: 0.8, b: 1, a: 1}
+    - _PlanetPos: {r: -15, g: 3, b: 25, a: 0}
+    - _SunCoreColor: {r: 1, g: 0.98, b: 0.85, a: 1}
+    - _SunCoronaColor: {r: 1, g: 0.15, b: 0, a: 1}
+    - _SunSurfaceColor: {r: 1, g: 0.35, b: 0.02, a: 1}
   m_BuildTextureStacks: []
   m_AllowLocking: 1

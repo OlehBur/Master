@@ -25,41 +25,50 @@ Material:
     m_TexEnvs: []
     m_Ints: []
     m_Floats:
-    - _AmbientLightIntensity: 0.097
+    - _AmbientLightIntensity: 0.234
     - _CloudMaxDistance: 409.6
     - _CloudScale: 0.0497
-    - _CloudSteps: 44.4
-    - _CloudWarp: 0
+    - _CloudSteps: 44
+    - _CloudWarp: 1.5
     - _Coverage: 1
     - _DensityMultiplier: 0.376
     - _DetailNoiseScale: 2
     - _DetailNoiseStrength: 0.255
     - _Dithering: 1
     - _DomainWarp: 0
+    - _Header_ClLight: 0
+    - _Header_ClMarch: 0
+    - _Header_ClShape: 0
+    - _Header_Clouds: 0
+    - _Header_General: 0
+    - _Header_TerColor: 0
+    - _Header_TerMarch: 0
+    - _Header_TerShape: 0
+    - _Header_Terrain: 0
     - _LightAbsorption: 20
     - _MaxHeight: 120
     - _MinHeight: 80
     - _MountainHeight: 62.5
     - _MountainScale: 0.0101
-    - _NoiseColorScale: 1
+    - _NoiseColorScale: 3.64
     - _SceneShadowStrength: 1
-    - _ShadowBlur: 1.29
-    - _ShadowSteps: 2.34
-    - _SilverLiningIntensity: 10
-    - _SilverLiningSpread: 0.99
+    - _ShadowBlur: 3.4
+    - _ShadowSteps: 3
+    - _SilverLiningIntensity: 3.56
+    - _SilverLiningSpread: 0.816
     - _SnowLine: 85.3
     - _TerrainMaxDistance: 347.9
-    - _TerrainMaxSteps: 49
-    - _TerrainWarp: 0
+    - _TerrainMaxSteps: 50
+    - _TerrainWarp: 34
     - _WarpStrength: 0
     - _WeatherScale: 0.0076
     m_Colors:
-    - _BaseColor: {r: 0.3773585, g: 0.27166763, b: 0.21181916, a: 1}
+    - _BaseColor: {r: 0.3773585, g: 0.2716676, b: 0.2118191, a: 1}
     - _CloudColor: {r: 0.9669811, g: 1, b: 0.9960222, a: 1}
-    - _CloudShadowColor: {r: 0, g: 0.15727174, b: 0.41509432, a: 1}
-    - _MeshShadowColor: {r: 0, g: 0.08598912, b: 0.31132078, a: 1}
-    - _MidColor: {r: 0.47134572, g: 0.5943396, b: 0, a: 1}
-    - _PeakColor: {r: 0.8254717, g: 0.9162264, b: 1, a: 1}
-    - _WindSpeed: {r: 0, g: 0, b: 0, a: 0}
+    - _CloudShadowColor: {r: 0, g: 0.1572717, b: 0.4150943, a: 1}
+    - _MeshShadowColor: {r: 0, g: 0.0859891, b: 0.3113208, a: 1}
+    - _MidColor: {r: 0.4713457, g: 0.5943396, b: 0, a: 1}
+    - _PeakColor: {r: 0.8254718, g: 0.9162264, b: 1, a: 1}
+    - _WindSpeed: {r: 0.2, g: 0, b: 0.1, a: 0}
   m_BuildTextureStacks: []
   m_AllowLocking: 1

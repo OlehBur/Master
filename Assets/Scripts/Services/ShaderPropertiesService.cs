@@ -3,13 +3,12 @@ using UnityEngine;
 using UnityEngine.Rendering;
 
 
-
-public class ShaderReadPropertiesService {
+public class ShaderPropertiesService {
     private readonly Material _terrainMaterial;
     private readonly Material _oceanMaterial;
     private readonly Material _spaceMaterial;
 
-    public ShaderReadPropertiesService(Material spaceMaterial, Material oceanMaterial, Material terrainMaterial) {
+    public ShaderPropertiesService(Material spaceMaterial, Material oceanMaterial, Material terrainMaterial) {
         _terrainMaterial = terrainMaterial;
         _oceanMaterial = oceanMaterial;
         _spaceMaterial = spaceMaterial;
@@ -70,6 +69,46 @@ public class ShaderReadPropertiesService {
         }
     }
 
+    public void ResetPropertiesToDefault(ShaderType type) {
+        if (type == ShaderType.None || IsMaterialsNoAssigned()) {
+            Debug.LogError("No material or shader assigned!");
+            return;
+        }
+
+        Material material = GetMaterialByType(type);
+        Shader shader = material.shader;
+        int propertyCount = shader.GetPropertyCount();
+
+        for (int i = 0; i < propertyCount; i++) {
+            string propName = shader.GetPropertyName(i);
+            ShaderPropertyType propType = shader.GetPropertyType(i);
+
+            //default values fr shader script
+            switch (propType) {
+                case ShaderPropertyType.Float:
+                case ShaderPropertyType.Range:
+                float defaultFloat = shader.GetPropertyDefaultFloatValue(i);
+                material.SetFloat(propName, defaultFloat);
+                break;
+
+                case ShaderPropertyType.Color:
+                Color defaultColor = shader.GetPropertyDefaultVectorValue(i);
+                material.SetColor(propName, defaultColor);
+                break;
+
+                case ShaderPropertyType.Vector:
+                Vector4 defaultVector = shader.GetPropertyDefaultVectorValue(i);
+                material.SetVector(propName, defaultVector);
+                break;
+
+                //case ShaderPropertyType.Texture:
+                //break;
+            }
+        }
+
+        Debug.Log($"Material {material.name} has been reset to shader defaults!");
+    }
+
     public Material GetMaterialByType(ShaderType type) =>
         type switch {
             ShaderType.Terrain => _terrainMaterial,
@@ -79,24 +118,40 @@ public class ShaderReadPropertiesService {
         };
 
     public List<ShaderPropertyData> GetProperties(ShaderType type) {
-        List<ShaderPropertyData> propertiesList = new List<ShaderPropertyData>();
-
         if (type == ShaderType.None || IsMaterialsNoAssigned()) {
             Debug.LogError("No material or shader assigned!");
-            return propertiesList;
+            return null;
         }
 
+        List<ShaderPropertyData> propertiesList = new List<ShaderPropertyData>();
+        ShaderPropertyData propData;
         Material material = GetMaterialByType(type);
         Shader shader = material.shader;
         int propertyCount = shader.GetPropertyCount();
 
+
         for (int i = 0; i < propertyCount; i++) {
             ShaderPropertyFlags flags = shader.GetPropertyFlags(i);
+            string propName = shader.GetPropertyName(i);
+
+            if (propName.StartsWith(Core.SHADER_PROPERTIE_HEADER_NAME)) {
+                propData = new ShaderPropertyData {
+                    IsHeader = true,
+                    Name = propName,
+                    Description = shader.GetPropertyDescription(i),
+                    Type = shader.GetPropertyType(i)
+                };
+                propertiesList.Add(propData);
+
+                continue;
+            }
+
+            //check & skip private fields that not custom headers
             if ((flags & ShaderPropertyFlags.HideInInspector) != 0)
                 continue;
 
-            ShaderPropertyData propData = new ShaderPropertyData {
-                Name = shader.GetPropertyName(i),
+            propData = new ShaderPropertyData {
+                Name = propName,
                 Description = shader.GetPropertyDescription(i),
                 Type = shader.GetPropertyType(i)
             };
@@ -105,16 +160,20 @@ public class ShaderReadPropertiesService {
                 case ShaderPropertyType.Float:
                 propData.FloatValue = material.GetFloat(propData.Name);
                 break;
+
                 case ShaderPropertyType.Int:
                 propData.IntValue = material.GetInteger(propData.Name);
                 break;
+
                 case ShaderPropertyType.Range:
                 propData.FloatValue = material.GetFloat(propData.Name);
                 propData.RangeLimits = shader.GetPropertyRangeLimits(i);
                 break;
+
                 case ShaderPropertyType.Color:
                 propData.ColorValue = material.GetColor(propData.Name);
                 break;
+
                 case ShaderPropertyType.Vector:
                 propData.VectorValue = material.GetVector(propData.Name);
                 break;

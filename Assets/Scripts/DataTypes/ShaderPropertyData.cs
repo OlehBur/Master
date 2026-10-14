@@ -2,6 +2,7 @@
 using UnityEngine.Rendering;
 
 public class ShaderPropertyData {
+    public bool IsHeader = false;
     public string Name;
     public string Description;
     public ShaderPropertyType Type;

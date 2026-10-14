@@ -24,6 +24,7 @@ public class ParamVectorView : MonoBehaviour {
 
     public void Init(string title, Vector3 vector) {
         Title.text = title;
+
         InputX.text = vector.x.ToString(Core.GetDecimalFormat(vector.x));
         InputY.text = vector.y.ToString(Core.GetDecimalFormat(vector.y));
         InputZ.text = vector.z.ToString(Core.GetDecimalFormat(vector.z));
@@ -44,7 +45,7 @@ public class ParamVectorView : MonoBehaviour {
                 //InputZ.text = value.ToString(Core.GetDecimalFormat(number));
                 Vector = new Vector3(Vector.x, Vector.y, number);
             }
-            
+
             OnValueChanged?.Invoke(Vector);
         }
     }

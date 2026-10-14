@@ -1,12 +1,21 @@
+using System;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.Rendering;
 using VContainer;
 
-public class ShaderSettingsController : MonoBehaviour {
-    [SerializeField] ShaderBlankView terrainSettingsWnd;
-    [SerializeField] ShaderBlankView oceanSettingsWnd;
-    [SerializeField] ShaderBlankView spaceSettingsWnd;
+
+public interface ISettingsWndService : IWndService {
+    //event Action<ShaderType> OnShaderChanged;
+    void ToggleWnd(ShaderType type);
+}
+
+public class ShaderSettingsController : MonoBehaviour, ISettingsWndService {
+    [SerializeField] ShaderSettingsView terrainSettings;
+    [SerializeField] ShaderSettingsView oceanSettings;
+    [SerializeField] ShaderSettingsView spaceSettings;
+    [SerializeField] GameObject settingsParentWnd;
 
     [SerializeField] GameObject floatParamPrefab;
     [SerializeField] GameObject rangeParamPrefab;
@@ -14,115 +23,147 @@ public class ShaderSettingsController : MonoBehaviour {
     [SerializeField] GameObject vectorParamPrefab;
     [SerializeField] GameObject sliderParamPrefab;
     [SerializeField] GameObject integerParamPrefab;
+    [SerializeField] GameObject headerPrefab;
 
-    private ShaderReadPropertiesService _shaderReadPropService;
-    private Dictionary<ShaderType, bool> isSettingsParamsInited = new();
+    private ShaderPropertiesService _shaderPropService;
+    private IShaderpassService _shaderPassService;
+    private Dictionary<ShaderType, bool> _isSettingsParamsInited = new();
+    private GameObject _currentOpenSettingsSubWindow = null;
+
+    public bool IsOpen => _currentOpenSettingsSubWindow != null;
+    public event Action<bool> OnStateChanged;
+    //public event Action<ShaderType> OnShaderChanged;
 
     [Inject]
-    public void Construct(ShaderReadPropertiesService shaderService) {
-        _shaderReadPropService = shaderService;
+    public void Construct(ShaderPropertiesService shaderPropService, IShaderpassService shaderPassService) {
+        _shaderPropService = shaderPropService;
+        _shaderPassService = shaderPassService;
     }
 
-    private void OnEnable() {
-        SelectAndOpenMaterialWindow(ShaderType.Terrain);
-    }
+    //public void OnOpenTerrainWnd() => OpenSubWndHandle(ShaderType.Terrain);
+    //public void OnOpenOceanWnd() => OpenSubWndHandle(ShaderType.Ocean);
+    //public void OnOpenSpaceWnd() => OpenSubWndHandle(ShaderType.Space);
 
-    public void SelectAndOpenMaterialWindow(ShaderType shaderType) {
-        ShaderBlankView settingsSubWnd = GetWindowByType(shaderType);
+    public void OnResetShader() =>
+        _shaderPropService.ResetPropertiesToDefault(_shaderPassService.CurrentShader);
 
-        if (isSettingsParamsInited.ContainsKey(shaderType) && isSettingsParamsInited[shaderType]) {
-            settingsSubWnd.Window.SetActive(true);
-            return;
+    void OpenSubWndHandle(ShaderType shaderType) {
+        ShaderSettingsView settingsSubWnd = GetWindowByType(shaderType);
+
+        settingsParentWnd.SetActive(true);
+        if (!IsSettingsSubWindowCreated(shaderType)) {
+            BuildWindow(shaderType, settingsSubWnd);
+            _isSettingsParamsInited.Add(shaderType, true);
         }
 
-        List<ShaderPropertyData> properties = _shaderReadPropService.GetProperties(shaderType);
-        Material material = _shaderReadPropService.GetMaterialByType(shaderType);
-        //// clear old ui
-        //foreach (Transform child in contentParentTerrain) {
-        //    Destroy(child.gameObject);
-        //}
+        _currentOpenSettingsSubWindow = settingsSubWnd.Window;
+        _currentOpenSettingsSubWindow.SetActive(true);
+    }
+
+    public void ToggleWnd(ShaderType type) {
+        if (type == ShaderType.None)
+            return;
+
+        if (IsOpen) {
+            settingsParentWnd.SetActive(false);
+            _currentOpenSettingsSubWindow.SetActive(false);
+            _currentOpenSettingsSubWindow = null;
+            OnStateChanged?.Invoke(false);
+        }
+        else {
+            if (type == ShaderType.Terrain)
+                OpenSubWndHandle(ShaderType.Terrain);
+            else if (type == ShaderType.Ocean)
+                OpenSubWndHandle(ShaderType.Ocean);
+            else
+                OpenSubWndHandle(ShaderType.Space);
+
+            OnStateChanged?.Invoke(true);
+        }
+    }
+
+    bool IsSettingsSubWindowCreated(ShaderType shaderType)
+       => _isSettingsParamsInited.ContainsKey(shaderType) && _isSettingsParamsInited[shaderType];
+
+    void BuildWindow(ShaderType shaderType, ShaderSettingsView shaderSettingsView) {
+        List<ShaderPropertyData> properties = _shaderPropService.GetProperties(shaderType);
+        Material material = _shaderPropService.GetMaterialByType(shaderType);
 
         //new params
-        float currentWndHeight = 60f;
+        float offset = shaderSettingsView.VerticalLayoutGroup.spacing;
+        float currentWndHeight = shaderSettingsView.VerticalLayoutGroup.padding.top + shaderSettingsView.VerticalLayoutGroup.padding.bottom + offset * 2;
         foreach (ShaderPropertyData prop in properties) {
-            GameObject paramObj = CreateParamObj(shaderType, prop.Type, settingsSubWnd.Content, prop.RangeLimits);
+            GameObject paramObj = CreateParamObj(shaderType, prop.Type, shaderSettingsView.Content, prop.RangeLimits, prop.IsHeader);
 
-            if (prop.Type == ShaderPropertyType.Float
+            if (prop.IsHeader && paramObj.TryGetComponent(out TextMeshProUGUI textView)) {
+
+                currentWndHeight += textView.rectTransform.sizeDelta.y + offset;
+                textView.text = prop.Description;
+            }
+            else if (prop.Type == ShaderPropertyType.Float
                 && paramObj.TryGetComponent(out ParamFloatView floatView)) {
 
-                currentWndHeight += floatView.RectTransform.sizeDelta.y;
+                currentWndHeight += floatView.RectTransform.sizeDelta.y + offset;
                 floatView.Init(prop.Description, prop.FloatValue);
                 floatView.OnValueChanged += val => material.SetFloat(prop.Name, val);
             }
             else if (prop.Type == ShaderPropertyType.Range && prop.RangeLimits.x == 0
                 && paramObj.TryGetComponent(out ParamSliderView sliderView)) {
 
-                currentWndHeight += sliderView.RectTransform.sizeDelta.y;
+                currentWndHeight += sliderView.RectTransform.sizeDelta.y + offset;
                 sliderView.Init(prop.Description, prop.FloatValue, prop.RangeLimits.y);
                 sliderView.OnValueChanged += val => material.SetFloat(prop.Name, val);
             }
             else if (prop.Type == ShaderPropertyType.Range
                 && paramObj.TryGetComponent(out ParamRangeView rangeView)) {
 
-                currentWndHeight += rangeView.RectTransform.sizeDelta.y;
+                currentWndHeight += rangeView.RectTransform.sizeDelta.y + offset;
                 rangeView.Init(prop.Description, prop.FloatValue, prop.RangeLimits.x, prop.RangeLimits.y);
                 rangeView.OnValueChanged += val => material.SetFloat(prop.Name, val);
             }
             else if (prop.Type == ShaderPropertyType.Color
                 && paramObj.TryGetComponent(out ParamColorView colorView)) {
 
-                currentWndHeight += colorView.RectTransform.sizeDelta.y;
+                currentWndHeight += colorView.RectTransform.sizeDelta.y + offset;
                 colorView.Init(prop.Description, prop.ColorValue);
                 colorView.OnValueChanged += val => material.SetColor(prop.Name, val);
             }
-            //int, texture
+            else if (prop.Type == ShaderPropertyType.Vector
+                && paramObj.TryGetComponent(out ParamVectorView vectorView)) {
+
+                currentWndHeight += vectorView.RectTransform.sizeDelta.y + offset;
+                vectorView.Init(prop.Description, prop.VectorValue);
+                vectorView.OnValueChanged += val => material.SetVector(prop.Name, val);
+                //int, texture
+            }
         }
 
-        settingsSubWnd.SetContentHeight(currentWndHeight);
-        isSettingsParamsInited.Add(shaderType, true);
-        settingsSubWnd.Window.SetActive(true);
+        shaderSettingsView.SetContentHeight(currentWndHeight);
     }
 
-    GameObject CreateParamObj(ShaderType shader, ShaderPropertyType property, Transform paramsParent, Vector2 rangeLimits = default) {
-        //Transform paramsParent = GetWindowByType(shader).Content;//GetParentByType(shader);
-        GameObject prefab = GetParamPrefab(property, rangeLimits);
+    GameObject CreateParamObj(ShaderType shader, ShaderPropertyType property, Transform paramsParent, Vector2 rangeLimits = default, bool isHeader = false) {
+        GameObject prefab = GetParamPrefab(property, rangeLimits, isHeader);
 
         return Instantiate(prefab, paramsParent);
     }
 
-    GameObject GetParamPrefab(ShaderPropertyType propType, Vector2 rangeLimits = default) =>
+    GameObject GetParamPrefab(ShaderPropertyType propType, Vector2 rangeLimits = default, bool isHeader = false) =>
         propType switch {
             ShaderPropertyType.Range => rangeLimits.x == 0f ?
             sliderParamPrefab : rangeParamPrefab,
-            ShaderPropertyType.Float => floatParamPrefab,
+            ShaderPropertyType.Float => isHeader ?
+            headerPrefab : floatParamPrefab,
             ShaderPropertyType.Color => colorParamPrefab,
             ShaderPropertyType.Vector => vectorParamPrefab,
             ShaderPropertyType.Int => integerParamPrefab,
             _ => null
         };
 
-    ShaderBlankView GetWindowByType(ShaderType type) =>
+    ShaderSettingsView GetWindowByType(ShaderType type) =>
         type switch {
-            ShaderType.Terrain => terrainSettingsWnd,
-            ShaderType.Ocean => oceanSettingsWnd,
-            ShaderType.Space => spaceSettingsWnd,
+            ShaderType.Terrain => terrainSettings,
+            ShaderType.Ocean => oceanSettings,
+            ShaderType.Space => spaceSettings,
             _ => null
         };
-
-    //GameObject GetWindowByType(ShaderType type) =>
-    //    type switch {
-    //        ShaderType.Terrain => terrainSettingsWnd.gameObject,
-    //        ShaderType.Ocean => oceanSettingsWnd.gameObject,
-    //        ShaderType.Space => spaceSettingsWnd.gameObject,
-    //        _ => null
-    //    };
-
-    //Transform GetParentByType(ShaderType shaderType) =>
-    //            shaderType switch {
-    //                ShaderType.Terrain => terrainSettingsWnd.Content,
-    //                ShaderType.Ocean => oceanSettingsWnd.Content,
-    //                ShaderType.Space => spaceSettingsWnd.Content,
-    //                _ => null
-    //            };
-
 }

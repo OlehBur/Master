@@ -508,9 +508,18 @@
                     "initialStateCheck": false
                 },
                 {
-                    "name": "Escape",
+                    "name": "Menu Q",
                     "type": "Button",
                     "id": "5ab9c86c-c127-4199-a6d2-70b14c6b2432",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "Settings E",
+                    "type": "Button",
+                    "id": "4fc82ad0-6786-43b3-9001-bbc5a1af9a40",
                     "expectedControlType": "",
                     "processors": "",
                     "interactions": "",
@@ -870,11 +879,22 @@
                 {
                     "name": "",
                     "id": "e980c7be-9cb1-41eb-bc46-8def8c807dcb",
-                    "path": "<Keyboard>/escape",
+                    "path": "<Keyboard>/q",
                     "interactions": "",
                     "processors": "",
                     "groups": "Keyboard&Mouse;Gamepad;Touch;Joystick;XR",
-                    "action": "Escape",
+                    "action": "Menu Q",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "e83040f2-a6e7-4aeb-8b67-de6fd0bc93d6",
+                    "path": "<Keyboard>/e",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Keyboard&Mouse;Gamepad;Touch;Joystick;XR",
+                    "action": "Settings E",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },

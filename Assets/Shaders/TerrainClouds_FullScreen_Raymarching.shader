@@ -2,55 +2,65 @@ Shader "Custom/FullScreen_TerrainClouds_Raymarching"
 {
     Properties
     {
+        [HideInInspector] _Header_General ("---{GENERAL}---", Float) = 0
         [Header(____________________________GENERAL_______________________________)]
-        _MeshShadowColor ("Mesh Shadow Tint Color", Color) = (0.25, 0.3, 0.4, 1.0)
-        _AmbientLightIntensity ("Ambient Light Intensity", Range(0, 1)) = 0.15
-        
-        [Header(____________________________CLOUDS_______________________________)]
-        [Header(Cloud March)]
-        _CloudSteps ("Cloud March Steps", Range(16, 128)) = 48
-        _ShadowSteps ("Shadow March Steps", Range(1, 8)) = 3
-        _CloudMaxDistance ("Cloud Fade Distance", Float) = 1200.0
-        _CloudScale ("Cloud Micro Scale", Range(0.0001, 0.1)) = 0.03
         _Dithering ("Dithering Strength", Range(0, 1)) = 1.0
-
-        [Header(Cloud Shaping)]
-        _MinHeight ("Min Cloud Height (Y)", Float) = 120.0
-        _MaxHeight ("Max Cloud Height (Y)", Float) = 220.0
-        _WindSpeed ("Wind Speed", Vector) = (0.2, 0.0, 0.1, 0.0)
-        _WeatherScale ("Weather Macro Scale", Range(0.001, .1)) = 0.003
-        _CloudWarp ("Turbulence (Warp)", Range(0, 100)) = 1.5
-        _Coverage ("Cloud Coverage", Range(0, 1)) = 0.5   
-       
+        _MeshShadowColor ("Mesh Shadow Tint Color", Color) = (0.0, 0.0859891, 0.3113208, 1.0)
+        _AmbientLightIntensity ("Ambient Light Intensity", Range(0, 1)) = 0.234
         
-        [Header(Cloud Lighting)]
-        _DensityMultiplier ("Cloud Density / Opacity", Range(0, 1)) = 0.4
-        _CloudColor ("Sunlit Cloud Color", Color) = (1.0, 0.98, 0.95, 1.0)
-        _LightAbsorption ("Light Absorption", Range(0.1, 20)) = 0.8
-        _SilverLiningIntensity ("Silver Lining Intensity", Range(0, 10)) = 3.0
-        _SilverLiningSpread ("Silver Lining Spread", Range(0.1, 0.99)) = 0.75
-        _CloudShadowColor ("Shadow Color", Color) = (0.3, 0.35, 0.45, 1.0)
-        _SceneShadowStrength ("Ground Shadow Strength", Range(0, 1)) = 0.7
-        _ShadowBlur ("Shadow Softness Blur", Range(0.1, 10.0)) = 4.0
+        [HideInInspector] _Header_Clouds ("---{CLOUDS}---", Float) = 0
+        [HideInInspector] _Header_ClMarch ("Clouds March", Float) = 0
+        [Header(____________________________CLOUDS_______________________________)]        
+        [Header(Cloud March)]
+        _CloudSteps ("Cloud March Steps", Range(16, 128)) = 44
+        _ShadowSteps ("Shadow March Steps", Range(1, 8)) = 3                
+        [HideInInspector] _Header_ClMarch ("Clouds Transform", Float) = 0
+        _CloudMaxDistance ("Cloud Fade Distance", Float) = 409.6
+        _CloudScale ("Cloud Micro Scale", Range(0.0001, 0.1)) = 0.0497
 
+        [HideInInspector] _Header_ClShape ("Clouds Shaping", Float) = 0
+        [Header(Cloud Shaping)]
+        _MinHeight ("Min Cloud Height (Y)", Float) = 80.0
+        _MaxHeight ("Max Cloud Height (Y)", Float) = 120.0
+        _WindSpeed ("Wind Speed", Vector) = (0.2, 0.0, 0.1, 0.0)
+        _WeatherScale ("Weather Macro Scale", Range(0.001, .1)) = 0.0076
+        _CloudWarp ("Turbulence (Warp)", Range(0, 100)) = 1.5
+        _Coverage ("Cloud Coverage", Range(0, 1)) = 1          
+        
+        [HideInInspector] _Header_ClLight ("Clouds Light", Float) = 0
+        [Header(Cloud Lighting)]
+        _DensityMultiplier ("Cloud Density / Opacity", Range(0, 1)) = 0.376
+        _CloudColor ("Sunlit Cloud Color", Color) = (0.9669811, 1.0, 0.9960222, 1.0)
+        _LightAbsorption ("Light Absorption", Range(0.1, 20)) = 20
+        _SilverLiningIntensity ("Silver Lining Intensity", Range(0, 10)) = 3.56
+        _SilverLiningSpread ("Silver Lining Spread", Range(0.1, 0.99)) = 0.816
+        _CloudShadowColor ("Shadow Color", Color) = (0.0, 0.1572717, 0.4150943, 1.0)
+        _SceneShadowStrength ("Ground Shadow Strength", Range(0, 1)) = 1
+        _ShadowBlur ("Shadow Softness Blur", Range(0.1, 10.0)) = 3.4
+
+        
+        [HideInInspector] _Header_Terrain ("---{TERRAIN}---", Float) = 0
+        [HideInInspector] _Header_TerMarch ("Terrain March", Float) = 0
         [Header(____________________________TERRAIN_______________________________)]
         [Header(Terrain March)]
-        _TerrainMaxSteps ("Terrain Raymarch Steps", Range(16, 256)) = 80
-        _TerrainMaxDistance ("Terrain Render Distance", Float) = 1500.0
-        _DetailNoiseScale ("Detail Rock Scale", Range(0, 2)) = 0.015
+        _TerrainMaxSteps ("Terrain Raymarch Steps", Range(16, 256)) = 50
+        _TerrainMaxDistance ("Terrain Render Distance", Float) = 347.9
+        _DetailNoiseScale ("Detail Rock Scale", Range(0, 2)) = 2.0
         
+        [HideInInspector] _Header_TerShape ("Terrain Shape", Float) = 0
         [Header(Terrain Shape)]
-        _MountainHeight ("Mountain Height Multiplier", Float) = 150.0
-        _MountainScale ("Mountain Horizontal Scale", Range(0.0001, 0.02)) = 0.002            
-        _TerrainWarp ("Shape Distortion", Range(0, 500)) = 120.0
-        _DetailNoiseStrength ("Detail Rock Strength", Range(0, 1)) = 1
+        _MountainHeight ("Mountain Height Multiplier", Float) = 62.5
+        _MountainScale ("Mountain Horizontal Scale", Range(0.0001, 0.02)) = 0.0101       
+        _TerrainWarp ("Shape Distortion", Range(0, 500)) = 34.0
+        _DetailNoiseStrength ("Detail Rock Strength", Range(0, 1)) = 0.255
         
+        [HideInInspector] _Header_TerColor ("Colors & Palette", Float) = 0
         [Header(Terrain Colors and Palette)]
-        _BaseColor ("Base Rock Color", Color) = (0.18, 0.2, 0.22, 1.0)
-        _MidColor ("Dirt / Vegetation Color", Color) = (0.28, 0.32, 0.22, 1.0)
-        _PeakColor ("Snow Peak Color", Color) = (0.88, 0.92, 0.95, 1.0)
-        _NoiseColorScale ("Color Detail Noise Scale", Float) = 0.02
-        _SnowLine ("Snow Line Height (Y)", Float) = 80.0    
+        _BaseColor ("Base Rock Color", Color) = (0.3773585, 0.2716676, 0.2118191, 1.0)
+        _MidColor ("Dirt / Vegetation Color", Color) = (0.4713457, 0.5943396, 0.0, 1.0)
+        _PeakColor ("Snow Peak Color", Color) = (0.8254718, 0.9162264, 1.0, 1.0)
+        _NoiseColorScale ("Color Detail Noise Scale", Float) = 3.64
+        _SnowLine ("Snow Line Height (Y)", Float) = 85.3
 
     }
     SubShader
@@ -127,31 +137,6 @@ Shader "Custom/FullScreen_TerrainClouds_Raymarching"
                 float depth : SV_Depth;
             };
 
-
-            // Terrain 
-            //float GetTerrainHeight(float2 p, out float octaveNoise)
-            //{
-            //    const float OCTAVES = 5;
-            //    float h = 0.0;
-            //    float amp = 1.0;
-            //    float freq = _MountainScale;
-            //    octaveNoise = 0.0;
-
-            //    for (int i = 0; i < OCTAVES; i++)
-            //    {
-            //        float n = 1.0 - abs(Noise3D(float3(p * freq, 0.0)) * 2.0 - 1.0);
-            //        h += n * n * amp;
-            //        if (i >= 2) octaveNoise += n * amp; // деталізовані октави для текстової варіації
-            //        freq *= 2.1;
-            //        amp *= 0.45;
-            //    }
-
-            //    // Додаткова мікро-шорсткість для більш роздробленої/гострої поверхні скель
-            //    float microDetail = 1.0 - abs(Noise3D(float3(p * _MountainScale * 12.0, 1.5)) * 2.0 - 1.0);
-            //    h += microDetail * microDetail * 0.035;
-
-            //    return h * _MountainHeight;
-            //}
             //with warp 
             float GetTerrainHeight(float2 p, out float octaveNoise)
             {
@@ -173,7 +158,7 @@ Shader "Custom/FullScreen_TerrainClouds_Raymarching"
                     float rawN = Noise3D(float3(warpedP * freq, 0.0));
                     float ridgeN = 1.0 - abs(rawN * 2.0 - 1.0);
                     
-                    // Змішуємо квадрат (гострі піки) та лінійний шум (нерівні дна долин)
+                    //mix the square (sharp peaks) and linear noise (uneven bottoms of the valleys)
                     float layer = lerp(ridgeN, ridgeN * ridgeN, 0.5);
                     
                     h += layer * amp;
@@ -182,7 +167,7 @@ Shader "Custom/FullScreen_TerrainClouds_Raymarching"
                     amp *= 0.45;
                 }
             
-                // 2. Дрібний ломкий шум (кремінна фактура на поверхні)
+                //Small brittle noise (flint texture on the surface)
                 float microDetail = Noise3D(float3(p * _DetailNoiseScale, 2.5));
                 h += (microDetail - 0.5) * _DetailNoiseStrength * 0.1;
             
@@ -212,74 +197,18 @@ Shader "Custom/FullScreen_TerrainClouds_Raymarching"
                     GetTerrainHeightSimple(p.xz - float2(0, e)) - GetTerrainHeightSimple(p.xz + float2(0, e))
                 ));
 
-                //// micro noise for sharper
-                //float3 microNoiseNormal = float3(
-                //    Noise3D(p * 0.15) - 0.5,
-                //    0.0,
-                //    Noise3D(p * 0.15 + float3(3.1, 0.0, 7.4)) - 0.5
-                //);
-
-                //return normalize(baseNormal + microNoiseNormal * SHARPNESS_COEF);
                 return baseNormal;
             }
 
-            // адапьтвгтй фаст марш рельєфу 
-            //bool RaymarchTerrain(float3 ro, float3 rd, float maxDist, out float3 hitPos, out float hitDist, out float octaveDetails)
-            //{
-            //    float t = 0.0;
-            //    float tPrev = 0.0; // точний вихідний інтервал бінарного пошуку
-            //    int steps = (int)_TerrainMaxSteps;
-
-            //    for (int i = 0; i < steps; i++)
-            //    {
-            //        hitPos = ro + rd * t;
-            //        float h = GetTerrainHeight(hitPos.xz, octaveDetails);
-            //        float diff = hitPos.y - h;
-
-            //        // перетин поверхні
-            //        if (diff < 0.0)
-            //        {
-            //            // бунар пошук строго між tPrev (над землею) і t (під землею)
-            //            float tMin = tPrev;
-            //            float tMax = t;
-
-            //            for (int j = 0; j < 6; j++)
-            //            {
-            //                float tMid = (tMin + tMax) * 0.5;
-            //                float3 midP = ro + rd * tMid;
-            //                float midH = GetTerrainHeight(midP.xz, octaveDetails);
-
-            //                if (midP.y < midH)
-            //                    tMax = tMid;
-            //                else
-            //                    tMin = tMid;
-            //            }
-
-            //            hitDist = tMax;
-            //            hitPos = ro + rd * hitDist;
-            //            GetTerrainHeight(hitPos.xz, octaveDetails); // Оновлюємо деталі для точки хіта
-            //            return true;
-            //        }
-
-            //        tPrev = t;
-            //        //// дин крок, що зменшується при наближенні до поверхні
-            //        //t += max(1.0, diff * 0.35);
-            //        // динам інкрем кроку з відстанню запобігає зависанню на ближніх ребрах
-            //        float dt = max(1.0 + t * 0.012, diff * 0.4);
-            //        t += dt;
-            //        if (t > maxDist) break;
-            //    }
-            //    return false;
-            //}
+            
             bool RaymarchTerrain(float3 ro, float3 rd, float maxDist, float dither, out float3 hitPos, out float hitDist, out float octaveDetails)
             {
-                // Dither на старті усуває плаваючі "сходинки" при русі камери
                 float t = dither * 2.0;
                 float tPrev = t;
                 int steps = (int)_TerrainMaxSteps;
             
-                // Адаптивний коефіцієнт кроку: чим крутіші гори (більший _MountainScale),
-                // тим меншим робиться крок, щоб промінь не пролітав крізь бічні контури
+                // Adaptive step size: the steeper the mountains (the higher the _MountainScale value),
+                // the smaller the step size becomes, so that the ray does not pass through the side contours
                 float slopeSafety = 1.0 / (1.0 + (_MountainHeight * _MountainScale * 2.5));
             
                 for (int i = 0; i < steps; i++)
@@ -290,7 +219,7 @@ Shader "Custom/FullScreen_TerrainClouds_Raymarching"
             
                     if (diff < 0.0)
                     {
-                        // Бінарний пошук: збільшено до 8 ітерацій для ідеально гострих країв
+                        // binary search for edge sharpness
                         float tMin = tPrev;
                         float tMax = t;
             
@@ -313,7 +242,7 @@ Shader "Custom/FullScreen_TerrainClouds_Raymarching"
                     }
             
                     tPrev = t;
-                    // Безпечний динамічний крок для стрімких вертикальних стін
+                    // a step for a smooth of sharply vertical walls
                     float dt = max(0.5 + t * 0.005, diff * slopeSafety);
                     t += dt;
                     if (t > maxDist) break;
@@ -427,11 +356,11 @@ Shader "Custom/FullScreen_TerrainClouds_Raymarching"
                 Light mainLight = GetMainLight();
                 float3 rawLightDir = normalize(mainLight.direction);
 
-                // aдаптивний напрямок освітлення для хмар у сутінках/вночі
+                ////adaptive lighting direction for clouds at dusk/night
                 float3 cloudLightDir = rawLightDir;
                 if (cloudLightDir.y < 0.05)
                 {
-                    // invert Y освітлення, щоб хмари підсвічувалися зверху від неба/місяця
+                    // invert Y lighting so that the clouds are lit from above by the sky/moon
                     float3 invertedLight = normalize(float3(rawLightDir.x, abs(rawLightDir.y) + 0.15, rawLightDir.z));
                     cloudLightDir = lerp(invertedLight, rawLightDir, smoothstep(-0.1, 0.05, rawLightDir.y));
                 }
@@ -441,7 +370,7 @@ Shader "Custom/FullScreen_TerrainClouds_Raymarching"
                 float shadowSunFade = smoothstep(0.1, 0.4, sunElevation);
 
                 // ==========================================
-                // КРОК 1: Реймарчинг Гір (Terrain)
+                // Reimarching Hills (Terrain)
                 // ==========================================
                 float3 activeWorldPos = sceneWorldPos;
                 float surfaceDist = maxSceneDist;
@@ -453,7 +382,6 @@ Shader "Custom/FullScreen_TerrainClouds_Raymarching"
                 float octaveDetails;
                 float searchDist = min(_TerrainMaxDistance, maxSceneDist);
 
-                //if (RaymarchTerrain(rayOrigin, rayDir, searchDist, hitPos, terrainHitPos, octaveDetails))
                 if (RaymarchTerrain(rayOrigin, rayDir, searchDist, dither, hitPos, terrainHitPos, octaveDetails))
                 {
                     if (terrainHitPos < maxSceneDist)
@@ -469,18 +397,15 @@ Shader "Custom/FullScreen_TerrainClouds_Raymarching"
                         Light terrainMainLight = GetMainLight(shadowCoord);
                         float meshShadowOnTerrain = terrainMainLight.shadowAttenuation;
 
-                        // Показник нахилу (Slope): 1.0 = плоска поверхня, 0.0 = отвесна скеля
-                        float slope = normal.y;
-                        //  Додатковий шум для процедурного зафарбовування
-                        float microNoise = Noise3D(hitPos * _NoiseColorScale);                        
-                        // Змішування скелі та ґрунту/рослинності залежно від нахилу та шуму
+                        float slope = normal.y;          // Slope: 1.0 = flat surface, 0.0 = sheer cliff               
+                        float microNoise = Noise3D(hitPos * _NoiseColorScale);  //  Additional noise for procedural pain                      
+                        
+                        // Mixing of rock and soil/vegetation depending on slope and noise
                         float midFactor = smoothstep(0.4, 0.85, slope + (octaveDetails * 0.2 - 0.1));
                         float3 rockAndMid = lerp(_BaseColor.rgb, _MidColor.rgb, midFactor);
-                        //  Накладання снігу на високі та плоскі ділянки
+                        //  Snow peaks on Elevated and Flat Areas
                         float snowFactor = smoothstep(_SnowLine - 15.0, _SnowLine + 15.0, hitPos.y + slope * 20.0 + microNoise * 10.0);
                         float3 terrainBaseCol = lerp(rockAndMid, _PeakColor.rgb, snowFactor);
-                        
-                        // Фактурний множник з октав шуму
                         float detailTint = lerp(0.85, 1.15, frac(octaveDetails * 3.0 + microNoise));
                         
                             // meshShadowOnTerrain for soft shadows fr meshes
@@ -488,25 +413,25 @@ Shader "Custom/FullScreen_TerrainClouds_Raymarching"
                         surfaceColor = terrainBaseCol * detailTint * (NdotL * mainLight.color * meshShadowOnTerrain + meshAmbientShadowColor);
                         //surfaceColor = terrainBaseCol * detailTint * (NdotL * mainLight.color + 0.15);
 
-                        // Плавне злиття гір із горизонтом/фоном
+                        //Smooth blending of mountains with horizon/background
                         float distFade = smoothstep(_TerrainMaxDistance * 0.7, _TerrainMaxDistance, terrainHitPos);
                         surfaceColor = lerp(surfaceColor, sceneColor.rgb, distFade);
 
-                        // Розрахунок глибини для SV_Depth
+                        // calc depth for SV_Depth
                         float4 clipPos = TransformWorldToHClip(hitPos);
                         finalDepth = lerp(clipPos.z / clipPos.w, rawDepth, distFade);
                     }
                 }
 
                 // ==========================================
-                // КРОК 2: Тіні від хмар на поверхню
+                //Shadows from the clouds on the surface
                 // ==========================================
                 float cloudShadow = ComputeSoftSceneShadow(activeWorldPos, cloudLightDir, dither);                
-                cloudShadow = lerp(1.0, cloudShadow, shadowSunFade);// mult 1..0 для тіней при наближенні сонця до горизонту
+                cloudShadow = lerp(1.0, cloudShadow, shadowSunFade);// mult 1..0 for shadows as the sun approaches the horizon
                 surfaceColor = lerp(surfaceColor * _CloudShadowColor.rgb, surfaceColor, cloudShadow);
 
                 // ==========================================
-                // КРОК 3: Реймарчинг Хмар
+                // Cloud March
                 // ==========================================
                 float tEntry, tExit;
                 bool hitHoriz = RayHorizIntersect(rayOrigin, rayDir, _MinHeight, _MaxHeight, tEntry, tExit);
@@ -529,21 +454,21 @@ Shader "Custom/FullScreen_TerrainClouds_Raymarching"
                 float stepSize = rayLength / (float)maxCloudSteps; 
                 float currentT = tEntry + stepSize * dither;
 
-                //// ДЛЯ ПЕРПЕНДИКУЛЯРНИХ КАМЕРІ ШАРІВ МЕРЧА 
-                //// 1. Отримуємо вектор напрямку камери Forward (в Unity View Space вперед — це float3(0, 0, -1)
+                //// FOR PERPENDICULAR LAYERS OF THE MERCH CAMERA
+                //// 1 get the camera direction vector Forward (in Unity View Space fwd — is float3(0, 0, -1)
                 //float3 camForward = TransformViewToWorldDir(float3(0, 0, -1));
-                //                // 2. Косинус кута між напрямком променя та напрямком камери
+                //                // 2. cosi of the angl btw the dir of ray and  dir of  cam
                 //float cosAngle = max(0.0001, dot(rayDir, camForward));
-                //// АБСОЛЮТНИЙ глобальний крок по Z для всього екрану.
-                //// Динамічно адаптується, якщо камера дивиться вгору (зеніт) або прямо (горизонт).
+                ////  ABSOLUTE global step along the Z-axis for the entire screen.
+                //// dynami adjusts depend on whether the camera is pointing upward (zenith) or straight ahead (horizon).
                 //float camTilt = abs(camForward.y); 
                 //float cloudThickness = _MaxHeight - _MinHeight;
                 //float maxViewDepth = lerp(_CloudMaxDistance, cloudThickness, camTilt);
-                //// Єдиний константний крок для всіх променів у кадрі
+                //// A single, constant step for all rays in the frame
                 //float stepZ = maxViewDepth / (float)maxCloudSteps;
-                //// Глибина входу в хмару (формує площини, перпендикулярні до камери)
+                //// Depth of entry into the cloud (forms planes perpendicular to the camera)
                 //float zEntry = tEntry * cosAngle;
-                //// Жостка прив'язка старту до ГЛОБАЛЬНОЇ сітки щоб площини були рівні
+                //// Strictly align the start point to the GLOBAL grid so that the planes are level
                 //float startZ = floor(zEntry / stepZ) * stepZ;
                 //float currentZ = startZ + stepZ * dither;
 
@@ -553,8 +478,8 @@ Shader "Custom/FullScreen_TerrainClouds_Raymarching"
 
                 for (int i = 0; i < maxCloudSteps; i++)
                 {
-                    //// Переведення плоскої глибині Z назад у дистанцію променя T для даного пікселя
-                    //float currentT = currentZ / cosAngle;//ТІЛЬКИ ДЛЯ ПЕРПЕНДИКУЛЯРНОГО МЕТОДУ
+                    //// Convert the plane depth Z back to the ray distance T for this pixel
+                    //float currentT = currentZ / cosAngle;//ONLY FOR THE PERPENDICULAR METHOD
 
                     if (currentT >= tExit) 
                         break;
@@ -565,7 +490,7 @@ Shader "Custom/FullScreen_TerrainClouds_Raymarching"
 
                     if (density > MIN_DENSITY)
                     {
-                        //float actualStepSize = stepZ / cosAngle;//ПЕРПЕНДИКУЛЯР
+                        //float actualStepSize = stepZ / cosAngle;//PERPENDICULAR
                         float stepFade = density * _LightAbsorption;
                         float stepTransmittance = exp(-stepFade * stepSize);
                         //float stepTransmittance = exp(-stepExtinction * actualStepSize);
@@ -587,7 +512,7 @@ Shader "Custom/FullScreen_TerrainClouds_Raymarching"
                             break;
                     }
                     currentT += stepSize;
-                    //currentZ += stepZ;// для перпендикуляра
+                    //currentZ += stepZ;// for perpendicular
                 }
 
                 float totalTransmittance = saturate(accumulatedTransmittance);

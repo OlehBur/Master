@@ -1,0 +1,84 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!21 &2100000
+Material:
+  serializedVersion: 8
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: OceanClouds_Raymarching
+  m_Shader: {fileID: 4800000, guid: 6d3652a593504f0408a9cdb14a8859a3, type: 3}
+  m_Parent: {fileID: 0}
+  m_ModifiedSerializedProperties: 0
+  m_ValidKeywords: []
+  m_InvalidKeywords: []
+  m_LightmapFlags: 4
+  m_EnableInstancingVariants: 0
+  m_DoubleSidedGI: 0
+  m_CustomRenderQueue: -1
+  stringTagMap: {}
+  disabledShaderPasses: []
+  m_LockedProperties: 
+  m_SavedProperties:
+    serializedVersion: 3
+    m_TexEnvs: []
+    m_Ints: []
+    m_Floats:
+    - _AmbientLightIntensity: 0.15
+    - _CloudDensity: 0.5
+    - _CloudMaxDistance: 350
+    - _CloudScale: 0.0747
+    - _CloudSteps: 35
+    - _CloudWarp: 15.5
+    - _Coverage: 1
+    - _DensityMultiplier: 0.443
+    - _Dithering: 1
+    - _Header_ClLight: 0
+    - _Header_ClMarch: 0
+    - _Header_ClShape: 0
+    - _Header_Clouds: 0
+    - _Header_General: 0
+    - _Header_Ocean: 0
+    - _Header_OceanColor: 0
+    - _Header_OceanLvl: 0
+    - _Header_OceanMarch: 0
+    - _Header_Underwater: 0
+    - _Header_WavesShape: 0
+    - _LightAbsorption: 20
+    - _MaxHeight: 90
+    - _MinHeight: 65
+    - _SceneShadowStrength: 0.581
+    - _SeaChoppy: 5.337
+    - _SeaColorDepth: 50
+    - _SeaFreq: 0.1412
+    - _SeaHeight: 0.5
+    - _SeaLevel: 25
+    - _SeaMaxDistance: 400
+    - _SeaMaxSteps: 80
+    - _SeaSpeed: 0.76
+    - _SeaTransparency: 0.0151
+    - _SeaWaterFogDensity: 0.015
+    - _ShadowBlur: 0.1
+    - _ShadowSteps: 2
+    - _SilverLiningIntensity: 1.15
+    - _SilverLiningSpread: 0.949
+    - _UnderFoamCoverage: 0.339
+    - _UnderFoamIntensity: 1.15
+    - _UnderSnellSize: 10
+    - _WaterSpeed: 1
+    - _WaveHeight: 0.51
+    - _WaveScale: 0.49
+    - _WeatherScale: 0.0067
+    m_Colors:
+    - _CloudColor: {r: 1, g: 0.98, b: 0.95, a: 1}
+    - _CloudShadowColor: {r: 0, g: 0.1477988, b: 0.4433962, a: 1}
+    - _MeshShadowColor: {r: 0, g: 0.17, b: 0.45, a: 1}
+    - _SeaBaseColor: {r: 0, g: 0.1, b: 0.25, a: 1}
+    - _SeaWaterColor: {r: 0, g: 0.62, b: 0.65, a: 1}
+    - _SunDir: {r: 0.5, g: 0.5, b: 0.5, a: 0}
+    - _WaterColor: {r: 0.19999996, g: 0.5, b: 0.8, a: 1}
+    - _WaterHighlight: {r: 0.8, g: 0.9, b: 1, a: 1}
+    - _WindSpeed: {r: 1, g: 0, b: 0, a: 0}
+  m_BuildTextureStacks: []
+  m_AllowLocking: 1

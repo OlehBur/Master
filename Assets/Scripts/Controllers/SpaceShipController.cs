@@ -30,7 +30,8 @@ public class SpaceshipController : MonoBehaviour {
     [SerializeField] Transform engineRotableL;
     [SerializeField] Transform engineRotableR;
 
-    [Inject] private readonly MenuService _menuService;
+    [Inject] private readonly IMenuWndService _menuService;
+    [Inject] private readonly ISettingsWndService _settingsWndService;
 
     private Rigidbody _rb;
     private float _moveFwdInput;   // W/S
@@ -53,11 +54,12 @@ public class SpaceshipController : MonoBehaviour {
 
     private void Start() {
         _menuService.OnStateChanged += ChangeControlActivation;
+        _settingsWndService.OnStateChanged += ChangeControlActivation;
         ChangeControlActivation(_menuService.IsOpen);
     }
 
     private void Update() {
-        if (!_menuService.IsOpen)
+        if (Cursor.lockState == CursorLockMode.Locked)
             HandleInput();
 
         CalculateProgressions();
@@ -65,7 +67,7 @@ public class SpaceshipController : MonoBehaviour {
     }
 
     void ChangeControlActivation(bool isActive) {
-        if (isActive) {
+        if (_menuService.IsOpen || _settingsWndService.IsOpen) {
             Cursor.lockState = CursorLockMode.None;
             Cursor.visible = true;
         }

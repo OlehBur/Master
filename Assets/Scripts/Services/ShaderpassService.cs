@@ -32,8 +32,8 @@ public class ShaderpassService : IShaderpassService {
     }
 
     public void ActivateShader(ShaderType type) {
-        CurrentShader = type;
         DisableAllPasses();
+        CurrentShader = type;
 
         string featureName = GetFeatureName(type);
         ToggleFeatureByName(featureName, true);
@@ -74,5 +74,7 @@ public class ShaderpassService : IShaderpassService {
             if (feature is FullScreenPassRendererFeature fullScreenFeature)
                 fullScreenFeature.SetActive(false);
         }
+
+        CurrentShader = ShaderType.None;
     }
 }

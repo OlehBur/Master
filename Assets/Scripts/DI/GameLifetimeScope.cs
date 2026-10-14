@@ -14,26 +14,25 @@ public class GameLifetimeScope : LifetimeScope {
 
 
     protected override void Configure(IContainerBuilder builder) {
+        //def scripts
         builder.Register<ShaderpassService>(Lifetime.Singleton)
                .WithParameter(rendererData)
                .WithParameter(oceanMaterial)
                .As<IShaderpassService>();
-        builder.Register<MenuService>(Lifetime.Singleton);
-        builder.Register<ShaderReadPropertiesService>(Lifetime.Singleton)
-            .WithParameter(terrainMaterial)
-            .WithParameter(oceanMaterial)
-            .WithParameter(spaceMaterial);
+        builder.Register<ShaderPropertiesService>(Lifetime.Singleton)
+                .WithParameter("terrainMaterial", terrainMaterial)
+                .WithParameter("oceanMaterial", oceanMaterial)
+                .WithParameter("spaceMaterial", spaceMaterial);
 
-
-        builder.RegisterComponentInHierarchy<ShaderSettingsController>();
-        builder.RegisterComponentInHierarchy<MainMenuController>();
+        //monobeh`s
+        builder.RegisterComponentInHierarchy<ShaderSettingsController>()
+            .As<ISettingsWndService>();
+        builder.RegisterComponentInHierarchy<MainMenuController>()
+            .As<IMenuWndService>();
         builder.RegisterComponentInHierarchy<SpaceshipController>();
-        //builder.RegisterComponentInHierarchy<EngineController>();
+
+        //mult monobeh`s
         EngineController[] controllers = shipParent.GetComponentsInChildren<EngineController>(true);
-        //foreach (EngineController controller in controllers) {
-        //    //builder.RegisterComponent(controller);
-        //    builder.RegisterComponent(controller).As<EngineController>();
-        //}
         builder.RegisterBuildCallback(container => {
             foreach (EngineController controller in controllers)
                 container.Inject(controller);
