@@ -5,76 +5,83 @@ Shader "Custom/FullScreen_Space_BlackHole_Sun"
         [HideInInspector] _Header_Hole ("---{BLACK HOLE}---", Float) = 0
         [HideInInspector] _Header_Hole ("Hole Transform", Float) = 0
         [Header(________________________BLACK HOLE TRANSFORMS_________________)]
-        _BlackHolePos ("Black Hole World Position", Vector) = (0.0, -50.0, 0.0, 0.0)
-        _Size ("Black Hole Radius (Base Size)", Range(0.01,100.0)) = 10.0
-        _Speed ("Accretion Disk Rotation Speed", Range(0.0, 20.0)) = 1.0
+        _BlackHolePos ("Black Hole World Position", Vector) = (0.0, -250.0, 0.0, 0.0)
+        _Size ("Black Hole Radius (Base Size)", Range(0.01,100.0)) = 42.9
+        _Speed ("Accretion Disk Rotation Speed", Range(0.0, 20.0)) = 3.3
         _DiskSteps ("Accretion Disk Thickness Layers", Range(1, 13)) = 9
+        
+        //_PhotonSphereR ("Photon Sphere Radius", Float) = 9
+
+        [HideInInspector] _Header_Hole ("Hole Graphics", Float) = 0
+        [Header(________________________BLACK HOLE GRAPHICS_________________)]
         _MaxRaySteps ("Raymarching Steps Quality", Range(32, 256)) = 256
         _LensingStrength ("Scene Gravitational Distortion", Range(0.0, 2.0)) = 2.0
+        _BlackHolePhysics ("Hole Physics (0 = hole over everything, 1 = real depth)", Range(0.0, 1.0)) = 0.0
         //[Toggle(_ENABLE_EFFECT_ON)] _PhysicalBH ("Physical Black Hole", Float) = 0
         
         [HideInInspector] _Header_Disk ("Hole Disk", Float) = 0
         [Header(________________________DISK COLORS___________________________)]
-        _DiskInnerColor ("Disk Inner Color", Color) = (1.0, 0.7185301, 0.0, 1.0)
-        _DiskOuterColor ("Disk Outer Color", Color) = (1.0, 0.0, 0.5673537, 1.0)
-        _GlowColor ("Gravitational Glow Color", Color) = (1.2, 1.1, 1.0, 1.0)
-        _GlowIntensity ("Glow Multiplier", Range(0.0, 5.0)) = 1.0
+        _DiskInnerColor ("Disk Inner Color", Color) = (1.0, 0.4549928, 0.0, 1.0)
+        _DiskOuterColor ("Disk Outer Color", Color) = (1.0, 0.0, 0.1142082, 1.0)
+        _GlowColor ("Gravitational Glow Color", Color) = (1.0, 0.950565, 0.75, 1.0)
+        _GlowIntensity ("Glow Multiplier", Range(0.0, 5.0)) = 5.0
+        _GlowWidth ("Glow Falloff Width (in hole radii)", Range(0.02, 2.0)) = 0.92
 
         [HideInInspector] _Header_Hole ("---{SUN}---", Float) = 0
         [HideInInspector] _Header_Sun ("Sun Control", Float) = 0
         [Header(________________________SUN CONTROL___________________________)]
-        _SunSize ("Sun Angular Size", Range(0.01, 0.4)) = 0.262
-        _SunBrightness ("Sun Brightness Multiplier", Range(0.1, 20.0)) = 3.5
-        _SunNoiseScale ("Sun Surface Plasma Detail Scale", Range(1.0, 30.0)) = 18.4
-        _SunTurbulenceSpeed ("Sun Surface Turbulence Speed", Range(0.0, 2.0)) = 0.57
+        _SunSize ("Sun Angular Size", Range(0.01, 0.4)) = 0.2
+        _SunBrightness ("Sun Brightness Multiplier", Range(0.1, 20.0)) = 6.4
+        _SunNoiseScale ("Sun Surface Plasma Detail Scale", Range(1.0, 30.0)) = 18.5
+        _SunTurbulenceSpeed ("Sun Surface Turbulence Speed", Range(0.0, 2.0)) = 0.74
         [HideInInspector] _Header_Sun ("Sun Colors", Float) = 0
-        _SunCoreColor ("Sun Core Color", Color) = (1.0, 0.8206021, 0.5707546, 1.0)
-        _SunSurfaceColor ("Sun Surface Plasma Color", Color) = (1.0, 0.333807, 0.0, 1.0)
-        _SunCoronaColor ("Sun Corona Color", Color) = (1.0, 0.1490196, 0.0, 1.0)
+        _SunCoreColor ("Sun Core Color", Color) = (1.0, 0.572549, 0.9909969, 1.0)
+        _SunSurfaceColor ("Sun Surface Plasma Color", Color) = (1.0, 0.03997353, 0.0, 1.0)
+        _SunCoronaColor ("Sun Corona Color", Color) = (0.0, 0.17627, 1.0, 1.0)
         [HideInInspector] _Header_Disk ("Sun Corona", Float) = 0
         _SunCoronaSize ("Corona Outer Thickness", Range(0.01, 0.8)) = 0.8
-        _SunRayCnt ("Corona Rays Density", Range(2.0, 64.0)) = 59.0
+        _SunRayCnt ("Corona Rays Density", Range(2.0, 64.0)) = 64.0
         _SunRaySpeed ("Corona Rays Motion Speed", Range(0.0, 2.0)) = 2.0
 
         [HideInInspector] _Header_Planet ("---{FROZEN PLANET}---", Float) = 0
         [HideInInspector] _Header_Sun ("Planet Transform", Float) = 0
         [Header(__________________________FROZEN PLANET_______________________)]
-        _PlanetPos ("Planet World Position (X,Y,Z)", Vector) = (74.4, -36.1, 395.99, 0.0)
-        _PlanetRadius ("Planet World Radius", Range(0.5, 150.0)) = 60.8
+        _PlanetPos ("Planet World Position (X,Y,Z)", Vector) = (-156.27, 3, 469.7, 0.0)
+        _PlanetRadius ("Planet World Radius", Range(0.5, 150.0)) = 65.0
         [HideInInspector] _Header_Sun ("Planet Surface", Float) = 0
-        _PlanetSharpness ("Planet Sharpmess", Range(0.0, 1.0)) = 0.074
-        _PlanetIceColor ("Ice Spires Color", Color) = (0.0, 0.6242826, 1.0, 1.0)
-        _PlanetDarkColor ("Deep Glacier Color", Color) = (0.04940603, 0.0, 0.1, 1.0)
-        _PlanetCragScale ("Ice Ridges Scale", Range(0.1, 10.0)) = 5.25
-        _PlanetTwist ("Ice Spire Twist", Range(0.0, 10.0)) = 2.11
+        _PlanetSharpness ("Planet Sharpmess", Range(0.0, 1.0)) = 0.157
+        _PlanetIceColor ("Ice Spires Color", Color) = (0.2, 0.8, 1.0, 1.0)
+        _PlanetDarkColor ("Deep Glacier Color", Color) = (0.0, 0.2325582, 1.0, 1.0)
+        _PlanetCragScale ("Ice Ridges Scale", Range(0.1, 10.0)) = 4.68
+        _PlanetTwist ("Ice Spire Twist", Range(0.0, 10.0)) = 2.13
         [HideInInspector] _Header_Asteroids ("Asteroids Ring", Float) = 0
         [Header(________________________ASTEROIDS and METEORS___________________)]
-        _RingOrbitRadius ("Ring Orbit Radius Multiplier", Range(0.5, 6.0)) = 2.48
+        _RingOrbitRadius ("Ring Orbit Radius Multiplier", Range(0.5, 6.0)) = 3.0
         _RingInnerRadius ("Ring Inner Radius Multiplier", Range(1.0, 6.0)) = 1.88
         _RingWidth ("Ring Horizontal Width", Range(0.1, 5.0)) = 1.67
-        _RingHeight ("Ring Vertical Height", Range(0.01, 1.0)) = 0.117
-        _AsteroidDensity ("Asteroids Density", Range(0.05, 1.0)) = 0.783
-        _AsteroidJitter ("Random Position Jitter", Range(0.0, 1.0)) = 0.269
-        _AsteroidFill ("Asteroids Fill (Chance Per Cell)", Range(0.02, 1.0)) = 0.35
-        _AsteroidSize ("Base Asteroid Size", Range(0.05, 1.0)) = 0.468
-        _AsteroidSizeVar ("Asteroid Size Variation", Range(0.0, 1.0)) = 0.0
+        _RingHeight ("Ring Vertical Height", Range(0.01, 1.0)) = 0.212
+        _AsteroidDensity ("Asteroids Density", Range(0.05, 1.0)) = 0.262
+        _AsteroidJitter ("Random Position Jitter", Range(0.0, 1.0)) = 1.0
+        _AsteroidFill ("Asteroids Fill (Chance Per Cell)", Range(0.02, 1.0)) = 0.102
+        _AsteroidSize ("Base Asteroid Size", Range(0.05, 1.0)) = 1.0
+        _AsteroidSizeVar ("Asteroid Size Variation", Range(0.0, 1.0)) = 1.0
         //_MeteorSpeed ("Meteors / Ring Motion Speed", Range(0.0, 10.0)) = 2.0
         //_MeteorColor ("Meteors Trail Color", Color) = (1.0, 0.55, 0.2, 1.0)
         //_MeteorCount ("Meteors / Asteroids Density", Range(1.0, 20.0)) = 8.0
         
         [HideInInspector] _Header_Nebula ("---{NEBULA}---", Float) = 0
         [Header(________________________PROCEDURAL NEBULA_____________________)]
-        _NebulaIntensity ("Nebula Brightness", Range(0.0, 5.0)) = 1.5
-        _NebulaScale ("Nebula Scale", Range(0.1, 10.0)) = 2.7
-        _NebulaColor1 ("Nebula Deep Color", Color) = (0.5566038, 0.0, 0.02565739, 1.0)
-        _NebulaColor2 ("Nebula Core Color", Color) = (0.01651991, 0.0, 0.490566, 1.0)
-        _NebulaColor3 ("Nebula Gas Glow", Color) = (0.7442204, 0.07075468, 1.0, 1.0)
+        _NebulaIntensity ("Nebula Brightness", Range(0.0, 5.0)) = 0.88
+        _NebulaScale ("Nebula Scale", Range(0.1, 10.0)) = 2.88
+        _NebulaColor1 ("Nebula Deep Color", Color) = (0.1509434, 0.0, 0.1194705, 1.0)
+        _NebulaColor2 ("Nebula Core Color", Color) = (0.0, 0.3177064, 0.3215686, 1.0)
+        _NebulaColor3 ("Nebula Gas Glow", Color) = (0.5188679, 0.03671235, 0.144242, 1.0)
         
         [HideInInspector] _Header_Stars ("---{STARS}---", Float) = 0
         [Header(________________________STARS CONTROL_________________________)]
-        _StarScale ("Stars Scale (Grid Density)", Range(10.0, 1000.0)) = 485
-        _StarThreshold ("Stars Sparseness", Range(0.5, 0.999)) = 0.966
-        _StarBrightness ("Stars Brightness", Range(0.0, 20.0)) = 3.3
+        _StarScale ("Stars Scale (Grid Density)", Range(10.0, 1000.0)) = 478
+        _StarThreshold ("Stars Sparseness", Range(0.5, 0.999)) = 0.994
+        _StarBrightness ("Stars Brightness", Range(0.0, 20.0)) = 10.2
     }
     SubShader
     {
@@ -105,12 +112,14 @@ Shader "Custom/FullScreen_Space_BlackHole_Sun"
             float _DiskSteps;
             float _MaxRaySteps;
             float _LensingStrength;
-            float _PhysicalBH;
+            float _BlackHolePhysics;
 
             float4 _DiskInnerColor;
             float4 _DiskOuterColor;
             float4 _GlowColor;
             float _GlowIntensity;
+            float _GlowWidth;
+            //float _PhotonSphereR;//  ~ radius of the photon sphere (approximately)
 
             // Sun Params
             float _SunSize;
@@ -919,11 +928,20 @@ Shader "Custom/FullScreen_Space_BlackHole_Sun"
                 bool meshInFront = !isSkybox && rawSceneDist < bhDist;
             
                 float4 diskAccCol = float4(0, 0, 0, 0);
-                float4 glow = float4(0, 0, 0, 0);
+                
+                //float4 glow = float4(0, 0, 0, 0);
+                float minR = 1e9; //nearest approach of the ray to the center of the hole
+
                 float3 finalColor = float3(0, 0, 0);
-            
                 bool suckedIn = false;
-                bool blockedByMesh = false;
+                
+                //bool blockedByMesh = false;
+                bool meshHit = false;                 // ray hit mesh in front of the hole
+                float4 diskAtMesh = float4(0,0,0,0);  // disk/glow that were BEFORE the mesh
+                //float4 glowAtMesh = float4(0,0,0,0);
+                float phys = _BlackHolePhysics;
+
+
                 float travel = 0.0; //how much beam passed from the camera
                 int maxSteps = (int)_MaxRaySteps;
             
@@ -953,11 +971,28 @@ Shader "Custom/FullScreen_Space_BlackHole_Sun"
                     //mesh is standing in front of the hole: we reached it - we can't see anything further (depth)
             
                     travel += stepDist;
-                    if (meshInFront && travel >= rawSceneDist) { blockedByMesh = true; break; }
+
+                    //if (meshInFront && travel >= rawSceneDist) { blockedByMesh = true; break; }
+                    if (meshInFront && !meshHit && travel >= rawSceneDist)
+                    {
+                        meshHit = true;
+                        diskAtMesh = diskAccCol; //memorize what was before the mesh
+                        //glowAtMesh = glow;
+                        if (phys >= 0.999) break; // full physics: what is behind the mesh doesn't matter, save steps
+                        // otherwise continue to calculate the "hole over everything" for blending
+                    }
             
-                    glow += _GlowColor * _GlowIntensity * (0.01 * stepDist * invDistSqr * invDistSqr * saturate(centDist * 2.0 - 1.2));
+                    
+                    //glow += _GlowColor * _GlowIntensity * (0.01 * stepDist * invDistSqr * invDistSqr * saturate(centDist * 2.0 - 1.2));
+                    //// Distance in hole radii: glow does not depend on _Size
+                    //float rn = max(centDist / _Size, 0.05);
+                    //float stepN = stepDist / _Size;
+                    //const float GLOW_SCALE = 40.0; // boost to make _GlowIntensity = 1 noticeable                    
+                    //// ~1/r^4: bright near the hole, quickly fades. saturate dims the glow near the horizon
+                    //glow += _GlowColor * _GlowIntensity * (GLOW_SCALE * 0.01 * stepN / (rn * rn * rn * rn) * saturate(rn * 2.0 - 1.2));
             
                     float dist2 = length(pos);
+                    minR = min(minR, dist2);
             
                     if (dist2 < _Size * 0.5)
                     {
@@ -976,81 +1011,174 @@ Shader "Custom/FullScreen_Space_BlackHole_Sun"
                     }
                 }
             
+                            // Glow = light that almost fell into the black hole (similar to a photon ring).
+                // The closer a ray of light comes to the horizon and survives, the brighter it becomes; it quickly fades away
+                //float edgeDist = max(0.0, minR / _Size - _PhotonSphereR);  
+                float edgeDist = max(0.0, minR / _Size);  
+                const float GLOW_SCALE = 2.0;
+                float3 glowCol = _GlowColor.rgb * _GlowIntensity * GLOW_SCALE * exp(-edgeDist / _GlowWidth);
+                if (suckedIn)
+                    glowCol = float3(0, 0, 0); // the core remains black
+
                 // ---------------- Compositing ----------------
                 output.depth = rawDepth;
-                float diskA = diskAccCol.a;
+                //float diskA = diskAccCol.a;
             
-                if (blockedByMesh)
+                //if (blockedByMesh)
+                //{
+                //    // mesh in front of the hole: we show it as it is (without distortion), disc/glow only if they were BEFORE it
+                //    finalColor = diskAccCol.rgb * diskA + (sceneColor.rgb + glow.rgb) * (1.0 - diskA);
+                //}
+                //else if (suckedIn)
+                //{
+                //    //The beam fell into the hole. But there may be a planet/asteroid in front of the hole - they close it
+                //    float3 objCol, objPos; float objT;
+                //    if (TraceSpaceObjects(camWorldPos, initialRay, min(rawSceneDist, bhDist), objCol, objT, objPos))
+                //    {
+                //        finalColor = objCol;
+                //        float4 c = TransformWorldToHClip(objPos);
+                //        output.depth = c.z / c.w;
+                //    }
+                //    else
+                //    {
+                //        finalColor = diskAccCol.rgb * diskA + glow.rgb * (1.0 - diskA);
+                //        float4 bhClip = TransformWorldToHClip(pos + _BlackHolePos.xyz); // horiz depth
+                //        output.depth = bhClip.z / bhClip.w;
+                //    }
+                //}
+                //else
+                //{
+                //    // single beam taking into account the power of the lens: at 0 = no distortion at all
+                //    float3 lensedRay = normalize(lerp(initialRay, ray, _LensingStrength));
+            
+                //    float3 projectedWorld = camWorldPos + lensedRay * 100.0;
+                //    float4 clipPos = TransformWorldToHClip(projectedWorld);
+                //    float2 distortedUV = (clipPos.xy / clipPos.w) * 0.5 + 0.5;
+                //    #if UNITY_UV_STARTS_AT_TOP
+                //    distortedUV.y = 1.0 - distortedUV.y;
+                //    #endif
+                //    distortedUV = saturate(distortedUV);
+            
+                //    float distortedRawDepth = SampleSceneDepth(distortedUV);
+                //    #if UNITY_REVERSED_Z
+                //    bool distortedIsSkybox = (distortedRawDepth <= 0.00001);
+                //    #else
+                //    bool distortedIsSkybox = (distortedRawDepth >= 0.99999);
+                //    #endif
+                //    float3 distortedSceneWorldPos = ComputeWorldSpacePosition(distortedUV, distortedRawDepth, UNITY_MATRIX_I_VP);
+                //    float distortedSceneDist = distortedIsSkybox ? 1e6 : distance(distortedSceneWorldPos, camWorldPos);
+            
+                //    float3 backgroundRGB = distortedIsSkybox
+                //        ? GenerateProceduralSpace(lensedRay)
+                //        : SAMPLE_TEXTURE2D(_BlitTexture, sampler_LinearClamp, distortedUV).rgb;
+            
+                //    // Planet and asteroids along the same beam
+                //    float3 objCol, objPos; float objT;
+                //    bool objHit = TraceSpaceObjects(camWorldPos, lensedRay, distortedSceneDist, objCol, objT, objPos);
+            
+                //    if (objHit)
+                //    {
+                //        float4 c = TransformWorldToHClip(objPos);
+                //        output.depth = c.z / c.w;
+                //    }
+            
+                //    if (objHit && objT < bhDist)
+                //    {
+                //        // the object is closer than the hole: it covers both the disk and the glow
+                //        finalColor = objCol;
+                //    }
+                //    else
+                //    {
+                //        if (objHit)
+                //            backgroundRGB = objCol; // the object BEHIND the hole - the disc is drawn on top
+                //        finalColor = diskAccCol.rgb * diskA + backgroundRGB * (1.0 - diskA) + glow.rgb * (1.0 - diskA);
+                //    }
+                //}
+
+                // The mesh as-is (without distortion) + the disk/glow that were BEFORE it
+                
+                //float3 meshCol = diskAtMesh.rgb * diskAtMesh.a + (sceneColor.rgb + glowAtMesh.rgb) * (1.0 - diskAtMesh.a);
+                float3 meshCol = diskAtMesh.rgb * diskAtMesh.a + sceneColor.rgb * (1.0 - diskAtMesh.a);
+                
+                if (meshHit && phys >= 0.999)
                 {
-                    // mesh in front of the hole: we show it as it is (without distortion), disc/glow only if they were BEFORE it
-                    finalColor = diskAccCol.rgb * diskA + (sceneColor.rgb + glow.rgb) * (1.0 - diskA);
-                }
-                else if (suckedIn)
-                {
-                    //The beam fell into the hole. But there may be a planet/asteroid in front of the hole - they close it
-                    float3 objCol, objPos; float objT;
-                    if (TraceSpaceObjects(camWorldPos, initialRay, min(rawSceneDist, bhDist), objCol, objT, objPos))
-                    {
-                        finalColor = objCol;
-                        float4 c = TransformWorldToHClip(objPos);
-                        output.depth = c.z / c.w;
-                    }
-                    else
-                    {
-                        finalColor = diskAccCol.rgb * diskA + glow.rgb * (1.0 - diskA);
-                        float4 bhClip = TransformWorldToHClip(pos + _BlackHolePos.xyz); // horiz depth
-                        output.depth = bhClip.z / bhClip.w;
-                    }
+                    // full physics: the mesh simply covers everything behind it
+                    finalColor = meshCol;
                 }
                 else
                 {
-                    // single beam taking into account the power of the lens: at 0 = no distortion at all
-                    float3 lensedRay = normalize(lerp(initialRay, ray, _LensingStrength));
-            
-                    float3 projectedWorld = camWorldPos + lensedRay * 100.0;
-                    float4 clipPos = TransformWorldToHClip(projectedWorld);
-                    float2 distortedUV = (clipPos.xy / clipPos.w) * 0.5 + 0.5;
-                    #if UNITY_UV_STARTS_AT_TOP
-                    distortedUV.y = 1.0 - distortedUV.y;
-                    #endif
-                    distortedUV = saturate(distortedUV);
-            
-                    float distortedRawDepth = SampleSceneDepth(distortedUV);
-                    #if UNITY_REVERSED_Z
-                    bool distortedIsSkybox = (distortedRawDepth <= 0.00001);
-                    #else
-                    bool distortedIsSkybox = (distortedRawDepth >= 0.99999);
-                    #endif
-                    float3 distortedSceneWorldPos = ComputeWorldSpacePosition(distortedUV, distortedRawDepth, UNITY_MATRIX_I_VP);
-                    float distortedSceneDist = distortedIsSkybox ? 1e6 : distance(distortedSceneWorldPos, camWorldPos);
-            
-                    float3 backgroundRGB = distortedIsSkybox
-                        ? GenerateProceduralSpace(lensedRay)
-                        : SAMPLE_TEXTURE2D(_BlitTexture, sampler_LinearClamp, distortedUV).rgb;
-            
-                    // Planet and asteroids along the same beam
-                    float3 objCol, objPos; float objT;
-                    bool objHit = TraceSpaceObjects(camWorldPos, lensedRay, distortedSceneDist, objCol, objT, objPos);
-            
-                    if (objHit)
+                    float diskA = diskAccCol.a;
+                
+                    if (suckedIn)
                     {
-                        float4 c = TransformWorldToHClip(objPos);
-                        output.depth = c.z / c.w;
-                    }
-            
-                    if (objHit && objT < bhDist)
-                    {
-                        // the object is closer than the hole: it covers both the disk and the glow
-                        finalColor = objCol;
+                        // "Hole over everything" (old look)
+                        //float3 holeCol = diskAccCol.rgb * diskA + glow.rgb * (1.0 - diskA);
+                        float3 holeCol = diskAccCol.rgb * diskA;
+                        float4 bhClip = TransformWorldToHClip(pos + _BlackHolePos.xyz); // horizon depth
+                        finalColor = holeCol;
+                        output.depth = bhClip.z / bhClip.w;
+                
+                        // Planet/asteroid IN FRONT of the hole covers it with weight phys
+                        float3 objCol, objPos; float objT;
+                        if (phys > 0.001 && TraceSpaceObjects(camWorldPos, initialRay, min(rawSceneDist, bhDist), objCol, objT, objPos))
+                        {
+                            finalColor = lerp(holeCol, objCol, phys);
+                            float4 c = TransformWorldToHClip(objPos);
+                            if (phys > 0.5) output.depth = c.z / c.w; // depth belongs to the dominant mode
+                        }
                     }
                     else
                     {
+                        float3 lensedRay = normalize(lerp(initialRay, ray, _LensingStrength));
+                
+                        float3 projectedWorld = camWorldPos + lensedRay * 100.0;
+                        float4 clipPos = TransformWorldToHClip(projectedWorld);
+                        float2 distortedUV = (clipPos.xy / clipPos.w) * 0.5 + 0.5;
+                        #if UNITY_UV_STARTS_AT_TOP
+                        distortedUV.y = 1.0 - distortedUV.y;
+                        #endif
+                        distortedUV = saturate(distortedUV);
+                
+                        float distortedRawDepth = SampleSceneDepth(distortedUV);
+                        #if UNITY_REVERSED_Z
+                        bool distortedIsSkybox = (distortedRawDepth <= 0.00001);
+                        #else
+                        bool distortedIsSkybox = (distortedRawDepth >= 0.99999);
+                        #endif
+                        float3 distortedSceneWorldPos = ComputeWorldSpacePosition(distortedUV, distortedRawDepth, UNITY_MATRIX_I_VP);
+                        float distortedSceneDist = distortedIsSkybox ? 1e6 : distance(distortedSceneWorldPos, camWorldPos);
+                
+                        float3 backgroundRGB = distortedIsSkybox
+                            ? GenerateProceduralSpace(lensedRay)
+                            : SAMPLE_TEXTURE2D(_BlitTexture, sampler_LinearClamp, distortedUV).rgb;
+                
+                        // Planet and asteroids along the same ray
+                        float3 objCol, objPos; float objT;
+                        bool objHit = TraceSpaceObjects(camWorldPos, lensedRay, distortedSceneDist, objCol, objT, objPos);
+                
                         if (objHit)
-                            backgroundRGB = objCol; // the object BEHIND the hole - the disc is drawn on top
-                        finalColor = diskAccCol.rgb * diskA + backgroundRGB * (1.0 - diskA) + glow.rgb * (1.0 - diskA);
+                        {
+                            float4 c = TransformWorldToHClip(objPos);
+                            output.depth = c.z / c.w;
+                            backgroundRGB = objCol; // the object is the background under the disk
+                        }
+                
+                        // "Hole over everything": disk and glow over the background
+                        //finalColor = diskAccCol.rgb * diskA + backgroundRGB * (1.0 - diskA) + glow.rgb * (1.0 - diskA);
+                        finalColor = diskAccCol.rgb * diskA + (backgroundRGB + glowCol) * (1.0 - diskA);
+                
+                        // The object closer than the hole covers the disk and glow with weight phys
+                        if (objHit && objT < bhDist)
+                            finalColor = lerp(finalColor, objCol, phys);
+                    }
+                
+                    // The mesh IN FRONT of the hole covers it with weight phys
+                    if (meshHit)
+                    {
+                        finalColor = lerp(finalColor, meshCol, phys);
+                        if (phys > 0.5) output.depth = rawDepth;
                     }
                 }
-            
             
                 // HDR without cropping (tone mapping will be done by Post Processing)
                 output.color = float4(max(0.0, finalColor), 1.0);

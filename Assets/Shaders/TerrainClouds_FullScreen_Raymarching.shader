@@ -33,7 +33,7 @@ Shader "Custom/FullScreen_TerrainClouds_Raymarching"
         _CloudColor ("Sunlit Cloud Color", Color) = (0.9669811, 1.0, 0.9960222, 1.0)
         _LightAbsorption ("Light Absorption", Range(0.1, 20)) = 20
         _SilverLiningIntensity ("Silver Lining Intensity", Range(0, 10)) = 3.56
-        _SilverLiningSpread ("Silver Lining Spread", Range(0.1, 0.99)) = 0.816
+        _SilverLiningSpread ("Silver Lining Spread", Range(-1.0, .9)) = 0.816
         _CloudShadowColor ("Shadow Color", Color) = (0.0, 0.1572717, 0.4150943, 1.0)
         _SceneShadowStrength ("Ground Shadow Strength", Range(0, 1)) = 1
         _ShadowBlur ("Shadow Softness Blur", Range(0.1, 10.0)) = 3.4

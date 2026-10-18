@@ -28,10 +28,10 @@ Material:
     - _AmbientLightIntensity: 0.234
     - _CloudMaxDistance: 409.6
     - _CloudScale: 0.0497
-    - _CloudSteps: 44
+    - _CloudSteps: 54
     - _CloudWarp: 1.5
     - _Coverage: 1
-    - _DensityMultiplier: 0.376
+    - _DensityMultiplier: 0.441
     - _DetailNoiseScale: 2
     - _DetailNoiseStrength: 0.255
     - _Dithering: 1
@@ -46,16 +46,16 @@ Material:
     - _Header_TerShape: 0
     - _Header_Terrain: 0
     - _LightAbsorption: 20
-    - _MaxHeight: 120
-    - _MinHeight: 80
+    - _MaxHeight: 300
+    - _MinHeight: 200
     - _MountainHeight: 62.5
     - _MountainScale: 0.0101
     - _NoiseColorScale: 3.64
     - _SceneShadowStrength: 1
     - _ShadowBlur: 3.4
     - _ShadowSteps: 3
-    - _SilverLiningIntensity: 3.56
-    - _SilverLiningSpread: 0.816
+    - _SilverLiningIntensity: 0
+    - _SilverLiningSpread: 0.9
     - _SnowLine: 85.3
     - _TerrainMaxDistance: 347.9
     - _TerrainMaxSteps: 50
@@ -69,6 +69,6 @@ Material:
     - _MeshShadowColor: {r: 0, g: 0.0859891, b: 0.3113208, a: 1}
     - _MidColor: {r: 0.4713457, g: 0.5943396, b: 0, a: 1}
     - _PeakColor: {r: 0.8254718, g: 0.9162264, b: 1, a: 1}
-    - _WindSpeed: {r: 0.2, g: 0, b: 0.1, a: 0}
+    - _WindSpeed: {r: 0, g: 0, b: 0, a: 0}
   m_BuildTextureStacks: []
   m_AllowLocking: 1

@@ -32,8 +32,11 @@ Material:
     - _CloudSteps: 35
     - _CloudWarp: 15.5
     - _Coverage: 1
-    - _DensityMultiplier: 0.443
+    - _DensityMultiplier: 0.34812587
     - _Dithering: 1
+    - _GodRayContrast: 0.5
+    - _GodRayDistance: 66.4
+    - _GodRayIntensity: 3.06
     - _Header_ClLight: 0
     - _Header_ClMarch: 0
     - _Header_ClShape: 0
@@ -63,8 +66,9 @@ Material:
     - _ShadowSteps: 2
     - _SilverLiningIntensity: 1.15
     - _SilverLiningSpread: 0.949
-    - _UnderFoamCoverage: 0.339
-    - _UnderFoamIntensity: 1.15
+    - _UnderFoamCoverage: 0
+    - _UnderFoamIntensity: 1.11
+    - _UnderRefractIndex: 1.093
     - _UnderSnellSize: 10
     - _WaterSpeed: 1
     - _WaveHeight: 0.51

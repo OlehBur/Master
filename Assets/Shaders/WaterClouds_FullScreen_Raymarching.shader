@@ -20,9 +20,15 @@
         
         [HideInInspector] _Header_Underwater ("Underwater Surface Controls", Float) = 0
         [Header(Underwater Surface Controls)]
-        _UnderSnellSize ("Underwater Window Size (Snell Radius)", Range(0.5, 10.0)) = 10.0
+        //_UnderSnellSize ("Underwater Window Size (Snell Radius)", Range(0.5, 10.0)) = 10.0
+        _UnderRefractIndex ("Water Refraction Index (bigger = smaller window)", Range(1.0, 2.0)) = 1.33
         _UnderFoamCoverage ("Underwater Wave Foam Amount (Coverage)", Range(0.0, 1.0)) = 0.339
         _UnderFoamIntensity ("Underwater Wave Foam Brightness", Range(0, 10)) = 1.15
+
+        [Header(Underwater God Rays)]
+        _GodRayIntensity ("God Rays Intensity", Range(0, 10)) = 4.0
+        _GodRayDistance ("God Rays Max Distance", Float) = 80.0
+        _GodRayContrast ("God Rays Contrast", Range(0.5, 4.0)) = 1.5
         
         [HideInInspector] _Header_OceanMarch ("Ocean March", Float) = 0
         [Header(Water March)]
@@ -104,7 +110,11 @@
             float _SeaTransparency;
             float _SeaColorDepth;
             float _SeaWaterFogDensity;
-            float _UnderSnellSize;
+            //float _UnderSnellSize;
+            float _UnderRefractIndex;
+            float _GodRayIntensity;
+            float _GodRayDistance;
+            float _GodRayContrast;
             float _UnderFoamCoverage;
             float _UnderFoamIntensity;
             float _SeaMaxSteps;
@@ -493,6 +503,111 @@
                 return accumulatedLight + backgroundColor * totalTransmittance;
             }
 
+            // Look at screen in  dir: drawn there (sky, objects).
+            // Returns 0 if dir is off-screen (using a soft boundary of 1/8 of screen)
+            float ScreenLookup(float3 dir, out float3 col, out float3 wp, out bool isSky)
+            {
+                col = float3(0, 0, 0); wp = float3(0, 0, 0); isSky = true;
+            
+                float4 clip = TransformWorldToHClip(_WorldSpaceCameraPos + dir * 100.0);
+                if (clip.w <= 0.0)
+                    return 0.0; // behind cam
+            
+                float2 u = clip.xy / clip.w * 0.5 + 0.5;
+                #if UNITY_UV_STARTS_AT_TOP
+                u.y = 1.0 - u.y;
+                #endif
+            
+                float2 e = min(u, 1.0 - u);
+                float fade = saturate(min(e.x, e.y) * 8.0);
+                if (fade <= 0.0) return 0.0;
+            
+                u = saturate(u);
+                float d = SampleSceneDepth(u);
+                #if UNITY_REVERSED_Z
+                isSky = (d <= 0.00001);
+                #else
+                isSky = (d >= 0.99999);
+                #endif
+                wp = ComputeWorldSpacePosition(u, d, UNITY_MATRIX_I_VP);
+                col = SAMPLE_TEXTURE2D(_BlitTexture, sampler_LinearClamp, u).rgb;
+                return fade;
+            }
+            
+            // What is visible ABOVE water along dir (ray exited water at point hitPos)
+            float3 SeeAboveWater(float3 hitPos, float3 dir, float3 sunDir, float3 sunColor, float3 cloudLightDir, float dither)
+            {
+                //background: analytical sky (works even off-screen)
+                float3 col = GetSkyReflection(dir, sunDir, sunColor);
+                float limitDist = 1e6;
+            
+                // real sky and objects above water from the screen (underwater objects are ignored)
+                float3 sc, wp; bool isSky;
+                float f = ScreenLookup(dir, sc, wp, isSky);
+                if (f > 0.0 && (isSky || wp.y > _SeaLevel))
+                {
+                    col = lerp(col, sc, f);
+                    if (!isSky) limitDist = distance(wp, hitPos); // object will block clouds behind it
+                }
+            
+                // march clouds along REFRACTED ray 
+                float tE, tX;
+                if (RayHorizIntersect(hitPos, dir, _MinHeight, _MaxHeight, tE, tX))
+                {
+                    float lim = min(limitDist, _CloudMaxDistance);
+                    if (tE < lim)
+                        col = MarchClouds(hitPos, dir, tE, min(tX, lim), dither, cloudLightDir, col);
+                }
+                return col;
+            }
+            
+            // Light shafts: waves act as a lens. Moving wave crests = bright shafts
+            float ShaftPattern(float2 q)
+            {
+                float t = _Time.y * _SeaSpeed;
+                float a = SeaOctave((q + t) * _SeaFreq * 2.5, 3.0);
+                float b = SeaOctave((q.yx * 0.7 - t * 1.3) * _SeaFreq * 3.7, 3.0);
+                return pow(smoothstep(0.1, 0.8, a + b), _GodRayContrast);
+            }
+            
+            // Underwater sun rays: raymarch along camera ray, at each step
+            // check if light fr surface reaches point
+            float3 UnderwaterGodRays(float3 ro, float3 rd, float dist, float3 L, float3 lightColor, float dither)
+            {
+                float sunFade = smoothstep(0.25, 0.7, L.y); // works when sun is more overhead
+                float maxD = min(dist, _GodRayDistance);
+                if (sunFade <= 0.0 || maxD <= 0.01) return float3(0, 0, 0);
+            
+                const int STEPS = 14;
+                float stepLen = maxD / STEPS;
+                float acc = 0.0;
+            
+                for (int i = 0; i < STEPS; i++)
+                {
+                    float s = (i + dither) * stepLen;
+                    float3 p = ro + rd * s;
+                    float depth = _SeaLevel - p.y;
+                    if (depth <= 0.0) continue; // no rays above water
+            
+                    // where sun ray enters water (assuming flat water)
+                    float3 q = p + L * (depth / L.y);
+            
+                    float beam    = ShaftPattern(q.xz);                       // light shafts from waves
+                    float shadow  = GetSceneMeshShadow(q);                    // objects above water block ray
+                    float sunAtt  = exp(-depth * _SeaWaterFogDensity * 3.0);  // Beer's law: less light with depth
+                    float viewAtt = exp(-s * _SeaWaterFogDensity);            // distant rays fade
+                    acc += beam * shadow * sunAtt * viewAtt;
+                }
+            
+                // Henyey-Greenstein phase func: brighter when looking towards sun
+                float phase = 0.2 + HenyeyGreenstein(dot(rd, L), 0.7);
+                float3 tint = lightColor * lerp(float3(1, 1, 1), _SeaWaterColor.rgb, 0.5);
+            
+                // scattering ~ absorp coefficient * length (therefore we multiply by stepLen and fog dens)
+                return tint * acc * stepLen * _SeaWaterFogDensity * phase * _GodRayIntensity * sunFade;
+            }
+
+
             FragOutput Frag(Varyings input)
             {
                 FragOutput output;
@@ -601,75 +716,161 @@
                 // ====================================================
                 else
                 {
-                    float3 skyAndClouds = sceneColor.rgb;
-                    float tEntry, tExit;
-                    if (RayHorizIntersect(rayOrigin, rayDir, _MinHeight, _MaxHeight, tEntry, tExit))
-                    {
-                        if (tEntry < maxSceneDist && tEntry < _CloudMaxDistance)
-                        {
-                            tExit = min(tExit, maxSceneDist);
-                            tExit = min(tExit, _CloudMaxDistance);
-
-                            skyAndClouds = MarchClouds(rayOrigin, rayDir, tEntry, tExit, dither, cloudLightDir, sceneColor.rgb);
-                        }
-                    }
-
                     float searchDist = min(_SeaMaxDistance, maxSceneDist);
-                    float waterHitDist;
-                    float3 hitPos;
+                    float waterHitDist = 0.0;
+                    float3 hitPos = rayOrigin;
                     float finalDepth = rawDepth;
-                    float3 surfaceColor = skyAndClouds;
-
+                
                     float camDepth = max(0.0, _SeaLevel - rayOrigin.y);
                     float camColorGrad = saturate(camDepth / max(0.001, _SeaColorDepth));
                     float3 ambientWaterColor = lerp(_SeaWaterColor.rgb, _SeaBaseColor.rgb, camColorGrad);
-
+                
+                    float3 surfaceColor = sceneColor.rgb;
+                    float rayEnd = maxSceneDist; // how far ray travel in water (god rays)
+                
+                    bool crossedSurface = false;
                     if (RaymarchWaterUnder(rayOrigin, rayDir, searchDist, dither, hitPos, waterHitDist))
+                        crossedSurface = (waterHitDist < maxSceneDist);
+                
+                    if (crossedSurface)
                     {
-                        if (waterHitDist < maxSceneDist)
+                        rayEnd = waterHitDist;
+                
+                        // normal to wave, oriented perpendicular to  beam (viewed from below)
+                        float eps = max(0.001, waterHitDist * waterHitDist * (0.1 / _ScreenParams.x));
+                        float3 N0 = GetWaterNormal(hitPos, eps);
+                        float3 Nd = faceforward(N0, rayDir, N0);
+                
+                        // SNELL'S LAW (water → air): n1*sin(a) = n2*sin(b)
+                        float eta = _UnderRefractIndex;
+                        float cosI = saturate(dot(-rayDir, Nd));
+                        float k = 1.0 - eta * eta * (1.0 - cosI * cosI);
+                        bool tir = (k <= 0.0); // total internal reflection: light doesnt escape from water
+                        float3 refrDir = normalize(eta * rayDir + (eta * cosI - sqrt(max(k, 0.0))) * Nd);
+                
+                        // FRENEL (Schlick) by angle of transmission; at critical angle, gradually -> 1
+                        float F = tir ? 1.0 : Schlick(0.02, sqrt(k));
+                
+                        // what seen through window:  sky, clouds, and objects distorted by waves
+                        float3 skyThru = ambientWaterColor;
+                        if (F < 0.99)
+                            skyThru = SeeAboveWater(hitPos, refrDir, rawLightDir, mainLight.color, cloudLightDir, dither);
+                
+                        // mirrored section: bottom surface reflects underwater world (seafloor, objects)
+                        float3 reflCol = ambientWaterColor;
+                        if (F > 0.05)
                         {
-                            float cosTheta = saturate(dot(rayDir, float3(0, 1, 0)));
-
-                            // Snell Window Radius Control (_UnderSnellSize)
-                            float snellEdgeMin = saturate(0.55 / max(0.01, _UnderSnellSize));
-                            float snellEdgeMax = saturate(0.72 / max(0.01, _UnderSnellSize));
-
-                            float fresnelUnder = Schlick(0.02, cosTheta);
-                            float tir = 1.0 - smoothstep(snellEdgeMin, snellEdgeMax, cosTheta);
-                            fresnelUnder = max(fresnelUnder, tir);
-
-                            // Threshold and area of ​​foam coverage (_UnderFoamCoverage)
-                            float relY = hitPos.y - _SeaLevel;
-                            float foamThreshold = lerp(_SeaHeight * 0.95, -0.2 * _SeaHeight, _UnderFoamCoverage);
-                            float waveFoam = smoothstep(foamThreshold, _SeaHeight, relY);
-                            float3 foamColor = float3(0.85, 0.95, 1.0) * _UnderFoamIntensity;
-
-                            float3 skyThruWater = skyAndClouds + foamColor * waveFoam;
-
-                            float3 surfaceUnderView = lerp(skyThruWater, ambientWaterColor, fresnelUnder);
-
-                            float fogFactor = 1.0 - exp(-waterHitDist * _SeaWaterFogDensity);
-                            surfaceColor = lerp(surfaceUnderView, ambientWaterColor, fogFactor);
-
-                            float4 clipPos = TransformWorldToHClip(hitPos);
-                            finalDepth = clipPos.z / clipPos.w;
+                            float3 reflDir = reflect(rayDir, Nd);
+                            float3 rc, rwp; bool rsky;
+                            float rf = ScreenLookup(reflDir, rc, rwp, rsky);
+                            if (rf > 0.0 && !rsky && rwp.y < _SeaLevel)
+                            {
+                                float pathFog = 1.0 - exp(-(waterHitDist + distance(rwp, hitPos)) * _SeaWaterFogDensity);
+                                reflCol = lerp(ambientWaterColor, lerp(rc, ambientWaterColor, pathFog), rf);
+                            }
                         }
-                        else
-                        {
-                            float fogFactor = 1.0 - exp(-maxSceneDist * _SeaWaterFogDensity);
-                            surfaceColor = lerp(skyAndClouds, ambientWaterColor, fogFactor);
-                        }
+                
+                        float3 surfaceUnderView = lerp(skyThru, reflCol, F);
+                
+                        // foam in patches (noise), rather than wave contours
+                        float relY = hitPos.y - _SeaLevel;
+                        float foamThreshold = lerp(_SeaHeight * 0.95, -0.2 * _SeaHeight, _UnderFoamCoverage);
+                        float foamMask = smoothstep(foamThreshold, _SeaHeight, relY);
+                        float foamPatch = smoothstep(0.45, 0.75, Noise3D(float3(hitPos.xz * 0.7, _Time.y * 0.3)));
+                        surfaceUnderView += float3(0.85, 0.95, 1.0) * _UnderFoamIntensity * foamMask * foamPatch;
+                
+                        // Bera's law: water mist along path from camera to surface
+                        float fogFactor = 1.0 - exp(-waterHitDist * _SeaWaterFogDensity);
+                        surfaceColor = lerp(surfaceUnderView, ambientWaterColor, fogFactor);
+                
+                        float4 clipPos = TransformWorldToHClip(hitPos);
+                        finalDepth = clipPos.z / clipPos.w;
                     }
                     else
                     {
+                        // didnt cross surface: either seabed or underwater objects, or distance
                         float fogFactor = 1.0 - exp(-maxSceneDist * _SeaWaterFogDensity);
-                        surfaceColor = lerp(skyAndClouds, ambientWaterColor, fogFactor);
+                        surfaceColor = lerp(sceneColor.rgb, ambientWaterColor, fogFactor);
                     }
-
+                
+                    // sunbeams over everything (adding light that scattered by water)
+                    surfaceColor += UnderwaterGodRays(rayOrigin, rayDir, rayEnd, rawLightDir, mainLight.color, dither);
+                
                     output.color = float4(surfaceColor, sceneColor.a);
                     output.depth = finalDepth;
                     return output;
                 }
+                //else
+                //{
+                //    float3 skyAndClouds = sceneColor.rgb;
+                //    float tEntry, tExit;
+                //    if (RayHorizIntersect(rayOrigin, rayDir, _MinHeight, _MaxHeight, tEntry, tExit))
+                //    {
+                //        if (tEntry < maxSceneDist && tEntry < _CloudMaxDistance)
+                //        {
+                //            tExit = min(tExit, maxSceneDist);
+                //            tExit = min(tExit, _CloudMaxDistance);
+
+                //            skyAndClouds = MarchClouds(rayOrigin, rayDir, tEntry, tExit, dither, cloudLightDir, sceneColor.rgb);
+                //        }
+                //    }
+
+                //    float searchDist = min(_SeaMaxDistance, maxSceneDist);
+                //    float waterHitDist;
+                //    float3 hitPos;
+                //    float finalDepth = rawDepth;
+                //    float3 surfaceColor = skyAndClouds;
+
+                //    float camDepth = max(0.0, _SeaLevel - rayOrigin.y);
+                //    float camColorGrad = saturate(camDepth / max(0.001, _SeaColorDepth));
+                //    float3 ambientWaterColor = lerp(_SeaWaterColor.rgb, _SeaBaseColor.rgb, camColorGrad);
+
+                //    if (RaymarchWaterUnder(rayOrigin, rayDir, searchDist, dither, hitPos, waterHitDist))
+                //    {
+                //        if (waterHitDist < maxSceneDist)
+                //        {
+                //            float cosTheta = saturate(dot(rayDir, float3(0, 1, 0)));
+
+                //            // Snell Window Radius Control (_UnderSnellSize)
+                //            float snellEdgeMin = saturate(0.55 / max(0.01, _UnderSnellSize));
+                //            float snellEdgeMax = saturate(0.72 / max(0.01, _UnderSnellSize));
+
+                //            float fresnelUnder = Schlick(0.02, cosTheta);
+                //            float tir = 1.0 - smoothstep(snellEdgeMin, snellEdgeMax, cosTheta);
+                //            fresnelUnder = max(fresnelUnder, tir);
+
+                //            // Threshold and area of ​​foam coverage (_UnderFoamCoverage)
+                //            float relY = hitPos.y - _SeaLevel;
+                //            float foamThreshold = lerp(_SeaHeight * 0.95, -0.2 * _SeaHeight, _UnderFoamCoverage);
+                //            float waveFoam = smoothstep(foamThreshold, _SeaHeight, relY);
+                //            float3 foamColor = float3(0.85, 0.95, 1.0) * _UnderFoamIntensity;
+
+                //            float3 skyThruWater = skyAndClouds + foamColor * waveFoam;
+
+                //            float3 surfaceUnderView = lerp(skyThruWater, ambientWaterColor, fresnelUnder);
+
+                //            float fogFactor = 1.0 - exp(-waterHitDist * _SeaWaterFogDensity);
+                //            surfaceColor = lerp(surfaceUnderView, ambientWaterColor, fogFactor);
+
+                //            float4 clipPos = TransformWorldToHClip(hitPos);
+                //            finalDepth = clipPos.z / clipPos.w;
+                //        }
+                //        else
+                //        {
+                //            float fogFactor = 1.0 - exp(-maxSceneDist * _SeaWaterFogDensity);
+                //            surfaceColor = lerp(skyAndClouds, ambientWaterColor, fogFactor);
+                //        }
+                //    }
+                //    else
+                //    {
+                //        float fogFactor = 1.0 - exp(-maxSceneDist * _SeaWaterFogDensity);
+                //        surfaceColor = lerp(skyAndClouds, ambientWaterColor, fogFactor);
+                //    }
+
+                //    output.color = float4(surfaceColor, sceneColor.a);
+                //    output.depth = finalDepth;
+                //    return output;
+                //}
             }
             ENDHLSL
         }
