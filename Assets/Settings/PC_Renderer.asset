@@ -52,7 +52,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b00045f12942b46c698459096c89274e, type: 3}
   m_Name: FullScreenPassRendererFeatureOldGUID
   m_EditorClassIdentifier: Unity.RenderPipelines.Universal.Runtime::FullScreenPassRendererFeature_OldGUID
-  m_Active: 1
+  m_Active: 0
   injectionPoint: 450
   fetchColorBuffer: 1
   requirements: 1
@@ -86,13 +86,13 @@ MonoBehaviour:
     probeVolumeBlendStatesCS: {fileID: 7200000, guid: b9a23f869c4fd45f19c5ada54dd82176, type: 3}
   m_RendererFeatures:
   - {fileID: 7833122117494664109}
-  - {fileID: -5865392959379506252}
   - {fileID: 1330829899426530010}
+  - {fileID: -5865392959379506252}
+  - {fileID: -871161611320902459}
   - {fileID: 340735201891755210}
   - {fileID: 5901058835587100921}
   - {fileID: -9155658645939807999}
-  - {fileID: -871161611320902459}
-  m_RendererFeatureMap: ad6b866f10d7b46cb47b1bfc2df099aeda82c913be0e7812caa43a5fdc88ba04f970d9edbec5e45101190664f890f080c5bc424f2103e9f3
+  m_RendererFeatureMap: ad6b866f10d7b46cda82c913be0e7812b47b1bfc2df099aec5bc424f2103e9f3caa43a5fdc88ba04f970d9edbec5e45101190664f890f080
   m_UseNativeRenderPass: 1
   xrSystemData: {fileID: 0}
   postProcessData: {fileID: 11400000, guid: 41439944d30ece34e96484bdb6645b55, type: 2}

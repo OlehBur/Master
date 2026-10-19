@@ -37,7 +37,6 @@ Shader "Custom/FullScreen_TerrainClouds_Raymarching"
         _CloudShadowColor ("Shadow Color", Color) = (0.0, 0.1572717, 0.4150943, 1.0)
         _SceneShadowStrength ("Ground Shadow Strength", Range(0, 1)) = 1
         _ShadowBlur ("Shadow Softness Blur", Range(0.1, 10.0)) = 3.4
-
         
         [HideInInspector] _Header_Terrain ("---{TERRAIN}---", Float) = 0
         [HideInInspector] _Header_TerMarch ("Terrain March", Float) = 0
@@ -47,6 +46,12 @@ Shader "Custom/FullScreen_TerrainClouds_Raymarching"
         _TerrainMaxDistance ("Terrain Render Distance", Float) = 347.9
         _DetailNoiseScale ("Detail Rock Scale", Range(0, 2)) = 2.0
         
+        [HideInInspector] _Header_TerShape ("Terrain Light", Float) = 0
+        [Header(Terrain Light)]
+        _TerrainShadowStrength ("Mountain Shadow Strength", Range(0, 1)) = 1.0
+        _TerrainShadowSoftness ("Mountain Shadow Softness (bigger = sharper)", Range(1, 64)) = 15.6
+        _TerrainShadowSteps ("Mountain Shadow Steps", Range(8, 64)) = 26
+
         [HideInInspector] _Header_TerShape ("Terrain Shape", Float) = 0
         [Header(Terrain Shape)]
         _MountainHeight ("Mountain Height Multiplier", Float) = 62.5
@@ -101,6 +106,9 @@ Shader "Custom/FullScreen_TerrainClouds_Raymarching"
             float _SnowLine;
             float _TerrainMaxDistance;
             float _TerrainMaxSteps;
+            float _TerrainShadowStrength;
+            float _TerrainShadowSoftness;
+            float _TerrainShadowSteps;
             float4 _BaseColor;
             float4 _MidColor;
             float4 _PeakColor;
@@ -250,6 +258,40 @@ Shader "Custom/FullScreen_TerrainClouds_Raymarching"
                 return false;
             }
 
+            //shadow of t mountains. go from the point to the sun and see how far the ray is above the terrain.
+            // Soft shadow: res = min(k * height / distance) - the closer the ray passes to
+            // the ridge, the darker the penumbra (Quilez method for heightfield)
+            float ComputeTerrainShadow(float3 p, float3 lightDir, float dither)
+            {
+                if (lightDir.y <= 0.01) return 1.0; //sun below the horizon - no direct light
+            
+                // the highest possible peak = sum of octave amplitudes (1+0.45+0.45^2+...) * height
+                float maxH = _MountainHeight * (1.79 + _DetailNoiseStrength * 0.05);
+                if (p.y >= maxH) return 1.0; // above all peaks - nothing to shadow
+            
+                float tMax = min((maxH - p.y) / lightDir.y, _TerrainMaxDistance); // no more peaks beyond this
+                float slopeSafety = 1.0 / (1.0 + (_MountainHeight * _MountainScale * 2.5)); // same as in RaymarchTerrain
+                int steps = (int)_TerrainShadowSteps;
+            
+                float t = 0.5 + dither; // offset from the surface to prevent self-shadowing
+                float res = 1.0;
+                float unused;
+            
+                for (int i = 0; i < steps; i++)
+                {
+                    float3 q = p + lightDir * t;
+                    float diff = q.y - GetTerrainHeight(q.xz, unused); // height of the ray above the terrain
+                    if (diff < 0.0) return 0.0;                        // the ray hits the mountain
+            
+                    res = min(res, _TerrainShadowSoftness * diff / t); // half shadow
+                    if (res < 0.01) return 0.0;
+            
+                    t += max(0.5 + t * 0.02, diff * slopeSafety);      // step increases with distance
+                    if (t > tMax) break;
+                }
+                return saturate(res);
+            }
+
             // Clouds
             float GetHeightGradient(float heightPercent)
             {
@@ -369,6 +411,12 @@ Shader "Custom/FullScreen_TerrainClouds_Raymarching"
                 float sunElevation = rawLightDir.y;
                 float shadowSunFade = smoothstep(0.1, 0.4, sunElevation);
 
+                #if UNITY_REVERSED_Z
+                bool isSkybox = (rawDepth <= 0.00001);
+                #else
+                bool isSkybox = (rawDepth >= 0.99999);
+                #endif
+
                 // ==========================================
                 // Reimarching Hills (Terrain)
                 // ==========================================
@@ -396,6 +444,9 @@ Shader "Custom/FullScreen_TerrainClouds_Raymarching"
                         float4 shadowCoord = TransformWorldToShadowCoord(hitPos);
                         Light terrainMainLight = GetMainLight(shadowCoord);
                         float meshShadowOnTerrain = terrainMainLight.shadowAttenuation;
+                        //mountain shadow on mountains
+                        if (NdotL > 0.001)
+                            meshShadowOnTerrain *= lerp(1.0, ComputeTerrainShadow(hitPos + normal * 0.5, rawLightDir, dither), _TerrainShadowStrength);
 
                         float slope = normal.y;          // Slope: 1.0 = flat surface, 0.0 = sheer cliff               
                         float microNoise = Noise3D(hitPos * _NoiseColorScale);  //  Additional noise for procedural pain                      
@@ -421,6 +472,21 @@ Shader "Custom/FullScreen_TerrainClouds_Raymarching"
                         float4 clipPos = TransformWorldToHClip(hitPos);
                         finalDepth = lerp(clipPos.z / clipPos.w, rawDepth, distFade);
                     }
+                }
+                // ==========================================
+                // shadow from terrain on the mesh surfaces 
+                // ==========================================
+                if (surfaceDist >= maxSceneDist && !isSkybox && maxSceneDist < _TerrainMaxDistance)
+                {
+                    float ts = ComputeTerrainShadow(sceneWorldPos, rawLightDir, dither);
+                
+                    //far from the camera mountains are no longer present - the shadow gradually disappears
+                    float tsFade = 1.0 - smoothstep(_TerrainMaxDistance * 0.7, _TerrainMaxDistance, maxSceneDist);
+                    ts = lerp(1.0, ts, _TerrainShadowStrength * tsFade);
+                
+                    // in the shadow, the mesh darkens to ambient + bluish tint (same as shadows from meshes on mountains)
+                    float3 shadowTint = _AmbientLightIntensity + _MeshShadowColor.rgb * 0.5;
+                    surfaceColor = lerp(surfaceColor * shadowTint, surfaceColor, ts);
                 }
 
                 // ==========================================

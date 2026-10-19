@@ -6,7 +6,7 @@ Shader "Custom/FullScreen_Space_BlackHole_Sun"
         [HideInInspector] _Header_Hole ("Hole Transform", Float) = 0
         [Header(________________________BLACK HOLE TRANSFORMS_________________)]
         _BlackHolePos ("Black Hole World Position", Vector) = (0.0, -250.0, 0.0, 0.0)
-        _Size ("Black Hole Radius (Base Size)", Range(0.01,100.0)) = 42.9
+        _Size ("Black Hole Radius (Base Size)", Range(0.01,100.0)) = 18.0
         _Speed ("Accretion Disk Rotation Speed", Range(0.0, 20.0)) = 3.3
         _DiskSteps ("Accretion Disk Thickness Layers", Range(1, 13)) = 9
         
@@ -24,8 +24,8 @@ Shader "Custom/FullScreen_Space_BlackHole_Sun"
         _DiskInnerColor ("Disk Inner Color", Color) = (1.0, 0.4549928, 0.0, 1.0)
         _DiskOuterColor ("Disk Outer Color", Color) = (1.0, 0.0, 0.1142082, 1.0)
         _GlowColor ("Gravitational Glow Color", Color) = (1.0, 0.950565, 0.75, 1.0)
-        _GlowIntensity ("Glow Multiplier", Range(0.0, 5.0)) = 5.0
-        _GlowWidth ("Glow Falloff Width (in hole radii)", Range(0.02, 2.0)) = 0.92
+        _GlowIntensity ("Glow Multiplier", Range(0.0, 15.0)) = 15.0
+        _GlowWidth ("Glow Falloff Width (in hole radii)", Range(0.02, 1.0)) = 0.17
 
         [HideInInspector] _Header_Hole ("---{SUN}---", Float) = 0
         [HideInInspector] _Header_Sun ("Sun Control", Float) = 0
@@ -73,8 +73,8 @@ Shader "Custom/FullScreen_Space_BlackHole_Sun"
         [Header(________________________PROCEDURAL NEBULA_____________________)]
         _NebulaIntensity ("Nebula Brightness", Range(0.0, 5.0)) = 0.88
         _NebulaScale ("Nebula Scale", Range(0.1, 10.0)) = 2.88
-        _NebulaColor1 ("Nebula Deep Color", Color) = (0.1509434, 0.0, 0.1194705, 1.0)
-        _NebulaColor2 ("Nebula Core Color", Color) = (0.0, 0.3177064, 0.3215686, 1.0)
+        _NebulaColor1 ("Nebula Deep Color", Color) = (0.0, 0.07075465, 0.4245283, 1.0)
+        _NebulaColor2 ("Nebula Core Color", Color) = (0.0, 0.0, 0.0, 1.0)
         _NebulaColor3 ("Nebula Gas Glow", Color) = (0.5188679, 0.03671235, 0.144242, 1.0)
         
         [HideInInspector] _Header_Stars ("---{STARS}---", Float) = 0
