@@ -21,9 +21,9 @@ public class ParamRangeView : MonoBehaviour {
     public void Init(string title, float initialValue, float minValue, float maxValue) {
         Title.text = title;
         Value.text = initialValue.ToString(Core.GetDecimalFormat(initialValue));
-        Slider.value = initialValue;
         Slider.minValue = minValue;
         Slider.maxValue = maxValue;
+        Slider.value = initialValue;
         MinRangeTitle.text = minValue.ToString(Core.GetDecimalFormat(minValue));
         MaxRangeTitle.text = maxValue.ToString(Core.GetDecimalFormat(maxValue));
     }

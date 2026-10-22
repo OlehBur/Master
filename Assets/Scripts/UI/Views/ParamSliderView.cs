@@ -19,8 +19,8 @@ public class ParamSliderView : MonoBehaviour {
     public void Init(string title, float initialValue, float maxValue) {
         Title.text = title;
         Value.text = initialValue.ToString(Core.GetDecimalFormat(initialValue));
-        Slider.value = initialValue;
         Slider.maxValue = maxValue;
+        Slider.value = initialValue;
     }
 
     void OnValue(float value) {

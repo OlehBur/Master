@@ -13,7 +13,7 @@
         [HideInInspector] _Header_OceanLvl ("Ocean Level and Clarity", Float) = 0
         [Header(____________________________OCEAN_______________________________)]
         [Header(Water Level and Clarity)]
-        _SeaLevel ("Sea Level (Y Height)", Float) = 25.0
+        _SeaLevel ("Ocean Level (Y Height)", Float) = 25.0
         _SeaTransparency ("Underwater Clarity / Depth Transparency", Range(0.001, 0.5)) = 0.0151
         _SeaColorDepth ("Color Depth Gradient Distance", Float) = 50.0
         _SeaWaterFogDensity ("Underwater Fog Density", Range(0.001, 0.1)) = 0.015
@@ -32,20 +32,20 @@
         
         [HideInInspector] _Header_OceanMarch ("Ocean March", Float) = 0
         [Header(Water March)]
-        _SeaMaxSteps ("Sea Raymarch Steps", Range(16, 256)) = 80
-        _SeaMaxDistance ("Sea Render Distance", Float) = 400.0
+        _SeaMaxSteps ("Ocean Raymarch Steps", Range(16, 256)) = 80
+        _SeaMaxDistance ("Ocean Render Distance", Float) = 400.0
         
         [HideInInspector] _Header_WavesShape ("Ocean Shape", Float) = 0
         [Header(Water Shape)]
-        _SeaHeight ("Sea Wave Height", Float) = 0.5
-        _SeaChoppy ("Sea Choppiness", Range(1.0, 10.0)) = 5.337
-        _SeaFreq ("Sea Wave Frequency", Range(0.01, 1.0)) = 0.1412
-        _SeaSpeed ("Sea Animation Speed", Range(0.1, 5.0)) = 0.76
+        _SeaHeight ("Ocean Wave Height", Range(-1.0, 1.5)) = 0.5
+        _SeaChoppy ("Ocean Choppiness", Range(1.0, 10.0)) = 5.337
+        _SeaFreq ("Ocean Wave Frequency", Range(0.01, 1.0)) = 0.1412
+        _SeaSpeed ("Ocean Animation Speed", Range(0.1, 5.0)) = 0.76
         
         [HideInInspector] _Header_OceanColor ("Ocean Colors", Float) = 0
         [Header(Water Colors)]
-        _SeaBaseColor ("Sea Deep Base Color", Color) = (0.0, 0.1, 0.25, 1.0)
-        _SeaWaterColor ("Sea Shallow / SSS Color", Color) = (0.0, 0.62, 0.65, 1.0)
+        _SeaBaseColor ("Ocean Deep Base Color", Color) = (0.0, 0.1, 0.25, 1.0)
+        _SeaWaterColor ("Ocean Shallow / SSS Color", Color) = (0.0, 0.62, 0.65, 1.0)
 
         [HideInInspector] _Header_Clouds ("---{CLOUDS}---", Float) = 0
         [HideInInspector] _Header_ClMarch ("Clouds March", Float) = 0
