@@ -20,6 +20,26 @@ MonoBehaviour:
   passIndex: 0
   bindDepthStencilAttachment: 1
   m_Version: 1
+--- !u!114 &-8261622851635281138
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b00045f12942b46c698459096c89274e, type: 3}
+  m_Name: PolyDepth
+  m_EditorClassIdentifier: Unity.RenderPipelines.Universal.Runtime::UnityEngine.Rendering.Universal.FullScreenPassRendererFeature
+  m_Active: 0
+  injectionPoint: 450
+  fetchColorBuffer: 1
+  requirements: 1
+  passMaterial: {fileID: 2100000, guid: 45c08775e23e7b447b883b82c5a72259, type: 2}
+  passIndex: 0
+  bindDepthStencilAttachment: 0
+  m_Version: 1
 --- !u!114 &-5865392959379506252
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -86,13 +106,14 @@ MonoBehaviour:
     probeVolumeBlendStatesCS: {fileID: 7200000, guid: b9a23f869c4fd45f19c5ada54dd82176, type: 3}
   m_RendererFeatures:
   - {fileID: 7833122117494664109}
-  - {fileID: 1330829899426530010}
   - {fileID: -5865392959379506252}
   - {fileID: -871161611320902459}
-  - {fileID: 340735201891755210}
+  - {fileID: 1330829899426530010}
+  - {fileID: -8261622851635281138}
   - {fileID: 5901058835587100921}
+  - {fileID: 340735201891755210}
   - {fileID: -9155658645939807999}
-  m_RendererFeatureMap: ad6b866f10d7b46cda82c913be0e7812b47b1bfc2df099aec5bc424f2103e9f3caa43a5fdc88ba04f970d9edbec5e45101190664f890f080
+  m_RendererFeatureMap: ad6b866f10d7b46cb47b1bfc2df099aec5bc424f2103e9f3da82c913be0e78120e8307d4c9d1588df970d9edbec5e451caa43a5fdc88ba0401190664f890f080
   m_UseNativeRenderPass: 1
   xrSystemData: {fileID: 0}
   postProcessData: {fileID: 11400000, guid: 41439944d30ece34e96484bdb6645b55, type: 2}
@@ -154,8 +175,6 @@ MonoBehaviour:
   m_Name: UpdateDepthFeature
   m_EditorClassIdentifier: Assembly-CSharp::UpdateDepthFeature
   m_Active: 0
-  settings:
-    renderPassEvent: 600
 --- !u!114 &5901058835587100921
 MonoBehaviour:
   m_ObjectHideFlags: 0

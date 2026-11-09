@@ -22,6 +22,7 @@ public class ShaderpassService : IShaderpassService {
     private const string TERRAIN_FEATURE_NAME = "Terrain";
     private const string OCEAN_FEATURE_NAME = "Ocean";
     private const string SPACE_FEATURE_NAME = "Space";
+    private const string POLYDEPTH_FEATURE_NAME = "PolyDepth";
 
     private static readonly int OCEAN_LEVEL_ID = Shader.PropertyToID("_SeaLevel");
 
@@ -53,6 +54,7 @@ public class ShaderpassService : IShaderpassService {
             ShaderType.Terrain => TERRAIN_FEATURE_NAME,
             ShaderType.Ocean => OCEAN_FEATURE_NAME,
             ShaderType.Space => SPACE_FEATURE_NAME,
+            ShaderType.PolyDepth => POLYDEPTH_FEATURE_NAME,
             _ => TERRAIN_FEATURE_NAME
         };
 

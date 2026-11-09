@@ -8,7 +8,8 @@ public enum ShaderType {
     None,
     Terrain,
     Ocean,
-    Space
+    Space,
+    PolyDepth
 }
 
 public interface IMenuWndService : IWndService {

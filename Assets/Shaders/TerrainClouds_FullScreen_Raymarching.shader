@@ -1,4 +1,4 @@
-Shader "Custom/FullScreen_TerrainClouds_Raymarching"
+ÔªøShader "Custom/FullScreen_TerrainClouds_Raymarching"
 {
     Properties
     {
@@ -7,7 +7,12 @@ Shader "Custom/FullScreen_TerrainClouds_Raymarching"
         _Dithering ("Dithering Strength", Range(0, 1)) = 1.0
         _MeshShadowColor ("Mesh Shadow Tint Color", Color) = (0.0, 0.0859891, 0.3113208, 1.0)
         _AmbientLightIntensity ("Ambient Light Intensity", Range(0, 1)) = 0.234
-        
+        //[Toggle]
+        _DebugRaymarchDepth ("Show Raymarch-Only Depth (Linear 0-1)", Range(0, 1)) = 0
+        //[Toggle] 
+        _DebugCombined ("Show Combined (Raymarch + Polygons) Linear01 Depth", Range(0, 1)) = 0
+        //_CutoutColor ("Depth Cutout / Background Color", Color) = (0.1, 0.1, 0.1, 1.0)
+
         [HideInInspector] _Header_Clouds ("---{CLOUDS}---", Float) = 0
         [HideInInspector] _Header_ClMarch ("Clouds March", Float) = 0
         [Header(____________________________CLOUDS_______________________________)]        
@@ -99,6 +104,9 @@ Shader "Custom/FullScreen_TerrainClouds_Raymarching"
             //general
             float4 _MeshShadowColor;
             float _AmbientLightIntensity;
+            float _DebugRaymarchDepth;
+            float _DebugCombined;
+            //float4 _CutoutColor;
 
             // Terrain Params
             float _MountainHeight;
@@ -407,7 +415,7 @@ Shader "Custom/FullScreen_TerrainClouds_Raymarching"
                     cloudLightDir = lerp(invertedLight, rawLightDir, smoothstep(-0.1, 0.05, rawLightDir.y));
                 }
 
-                // fade Ú≥ÌÂÈ Ì‡ ÁÂÏÎ≥ ·≥Îˇ „ÓËÁÓÌÚÛ  30% - 0%
+                // fade —Ç—ñ–Ω–µ–π –Ω–∞ –∑–µ–º–ª—ñ –±—ñ–ª—è –≥–æ—Ä–∏–∑–æ–Ω—Ç—É  30% - 0%
                 float sunElevation = rawLightDir.y;
                 float shadowSunFade = smoothstep(0.1, 0.4, sunElevation);
 
@@ -430,10 +438,14 @@ Shader "Custom/FullScreen_TerrainClouds_Raymarching"
                 float octaveDetails;
                 float searchDist = min(_TerrainMaxDistance, maxSceneDist);
 
+                bool hitRaymarchTerrain = false;
+                bool hitRaymarchCloud  = false;
+                float raymarchOnlyDepth = rawDepth;
                 if (RaymarchTerrain(rayOrigin, rayDir, searchDist, dither, hitPos, terrainHitPos, octaveDetails))
                 {
                     if (terrainHitPos < maxSceneDist)
                     {
+                        hitRaymarchTerrain = true;
                         surfaceDist = terrainHitPos;
                         activeWorldPos = hitPos;
 
@@ -471,6 +483,8 @@ Shader "Custom/FullScreen_TerrainClouds_Raymarching"
                         // calc depth for SV_Depth
                         float4 clipPos = TransformWorldToHClip(hitPos);
                         finalDepth = lerp(clipPos.z / clipPos.w, rawDepth, distFade);
+
+                        raymarchOnlyDepth = clipPos.z / clipPos.w;
                     }
                 }
                 // ==========================================
@@ -501,91 +515,136 @@ Shader "Custom/FullScreen_TerrainClouds_Raymarching"
                 // ==========================================
                 float tEntry, tExit;
                 bool hitHoriz = RayHorizIntersect(rayOrigin, rayDir, _MinHeight, _MaxHeight, tEntry, tExit);
+                float cloudAccumulatedDensity = 0.0;
 
                 if (!hitHoriz || tEntry >= surfaceDist || tEntry >= _CloudMaxDistance)
                 {
                     output.color = float4(surfaceColor, sceneColor.a);
                     output.depth = finalDepth;
-                    return output;
+                    //return output;
                 }
-
-                tEntry = min(tEntry, surfaceDist);
-                tExit = min(tExit, surfaceDist);
-                tExit = min(tExit, _CloudMaxDistance);
-
-                float accumulatedTransmittance = 1.0;
-                float3 accumulatedLight = 0.0;
-                int maxCloudSteps = (int)_CloudSteps;
-                float rayLength = tExit - tEntry;
-                float stepSize = rayLength / (float)maxCloudSteps; 
-                float currentT = tEntry + stepSize * dither;
-
-                //// FOR PERPENDICULAR LAYERS OF THE MERCH CAMERA
-                //// 1 get the camera direction vector Forward (in Unity View Space fwd ó is float3(0, 0, -1)
-                //float3 camForward = TransformViewToWorldDir(float3(0, 0, -1));
-                //                // 2. cosi of the angl btw the dir of ray and  dir of  cam
-                //float cosAngle = max(0.0001, dot(rayDir, camForward));
-                ////  ABSOLUTE global step along the Z-axis for the entire screen.
-                //// dynami adjusts depend on whether the camera is pointing upward (zenith) or straight ahead (horizon).
-                //float camTilt = abs(camForward.y); 
-                //float cloudThickness = _MaxHeight - _MinHeight;
-                //float maxViewDepth = lerp(_CloudMaxDistance, cloudThickness, camTilt);
-                //// A single, constant step for all rays in the frame
-                //float stepZ = maxViewDepth / (float)maxCloudSteps;
-                //// Depth of entry into the cloud (forms planes perpendicular to the camera)
-                //float zEntry = tEntry * cosAngle;
-                //// Strictly align the start point to the GLOBAL grid so that the planes are level
-                //float startZ = floor(zEntry / stepZ) * stepZ;
-                //float currentZ = startZ + stepZ * dither;
-
-
-                float cosTheta = dot(rayDir, cloudLightDir);
-                float phase = HenyeyGreenstein(cosTheta, _SilverLiningSpread) * _SilverLiningIntensity;
-
-                for (int i = 0; i < maxCloudSteps; i++)
+                else
                 {
-                    //// Convert the plane depth Z back to the ray distance T for this pixel
-                    //float currentT = currentZ / cosAngle;//ONLY FOR THE PERPENDICULAR METHOD
+                    hitRaymarchCloud = true;
 
-                    if (currentT >= tExit) 
-                        break;
+                    tEntry = min(tEntry, surfaceDist);
+                    tExit = min(tExit, surfaceDist);
+                    tExit = min(tExit, _CloudMaxDistance);
 
-                    float3 currentPos = rayOrigin + rayDir * currentT;
-                    float distFade = 1.0 - smoothstep(_CloudMaxDistance * 0.5, _CloudMaxDistance, currentT);
-                    float density = GetCloudDensity(currentPos) * distFade;
+                    float accumulatedTransmittance = 1.0;
+                    float3 accumulatedLight = 0.0;
+                    int maxCloudSteps = (int)_CloudSteps;
+                    float rayLength = tExit - tEntry;
+                    float stepSize = rayLength / (float)maxCloudSteps; 
+                    float currentT = tEntry + stepSize * dither;
 
-                    if (density > MIN_DENSITY)
+                    //// FOR PERPENDICULAR LAYERS OF THE MERCH CAMERA
+                    //// 1 get the camera direction vector Forward (in Unity View Space fwd ‚Äî is float3(0, 0, -1)
+                    //float3 camForward = TransformViewToWorldDir(float3(0, 0, -1));
+                    //                // 2. cosi of the angl btw the dir of ray and  dir of  cam
+                    //float cosAngle = max(0.0001, dot(rayDir, camForward));
+                    ////  ABSOLUTE global step along the Z-axis for the entire screen.
+                    //// dynami adjusts depend on whether the camera is pointing upward (zenith) or straight ahead (horizon).
+                    //float camTilt = abs(camForward.y); 
+                    //float cloudThickness = _MaxHeight - _MinHeight;
+                    //float maxViewDepth = lerp(_CloudMaxDistance, cloudThickness, camTilt);
+                    //// A single, constant step for all rays in the frame
+                    //float stepZ = maxViewDepth / (float)maxCloudSteps;
+                    //// Depth of entry into the cloud (forms planes perpendicular to the camera)
+                    //float zEntry = tEntry * cosAngle;
+                    //// Strictly align the start point to the GLOBAL grid so that the planes are level
+                    //float startZ = floor(zEntry / stepZ) * stepZ;
+                    //float currentZ = startZ + stepZ * dither;
+
+
+                    float cosTheta = dot(rayDir, cloudLightDir);
+                    float phase = HenyeyGreenstein(cosTheta, _SilverLiningSpread) * _SilverLiningIntensity;
+
+                    for (int i = 0; i < maxCloudSteps; i++)
                     {
-                        //float actualStepSize = stepZ / cosAngle;//PERPENDICULAR
-                        float stepFade = density * _LightAbsorption;
-                        float stepTransmittance = exp(-stepFade * stepSize);
-                        //float stepTransmittance = exp(-stepExtinction * actualStepSize);
-                        float stepAlpha = 1.0 - stepTransmittance;
-                        float lightTransmittance = LightMarch(currentPos, cloudLightDir);
-                       
-                        // mesh shadow on clouds
-                        float meshShadowOnCloud = GetSceneMeshShadow(currentPos);
-                        //smooth mesh shadow on clouds
-                        float3 meshShadowColor = lerp(_MeshShadowColor.rgb+ _AmbientLightIntensity, float3(1,1,1), meshShadowOnCloud);
-                        lightTransmittance *= meshShadowOnCloud;//dec light on shad
-                       
-                        //float3 cloudColorSample = lerp(_CloudShadowColor.rgb, _CloudColor.rgb, lightTransmittance);
-                        float3 cloudColorSample = lerp(_CloudShadowColor.rgb*meshShadowColor, _CloudColor.rgb * (1.0 + phase), lightTransmittance);//with silverLine
-                        accumulatedLight += cloudColorSample * stepAlpha * accumulatedTransmittance;
-                        accumulatedTransmittance *= stepTransmittance;
+                        //// Convert the plane depth Z back to the ray distance T for this pixel
+                        //float currentT = currentZ / cosAngle;//ONLY FOR THE PERPENDICULAR METHOD
 
-                        if (accumulatedTransmittance < 0.01)
+                        if (currentT >= tExit) 
                             break;
+
+                        float3 currentPos = rayOrigin + rayDir * currentT;
+                        float distFade = 1.0 - smoothstep(_CloudMaxDistance * 0.5, _CloudMaxDistance, currentT);
+                        float density = GetCloudDensity(currentPos) * distFade;
+
+                        if (density > MIN_DENSITY)
+                        {
+                            cloudAccumulatedDensity += density * stepSize;
+
+                            //float actualStepSize = stepZ / cosAngle;//PERPENDICULAR
+                            float stepFade = density * _LightAbsorption;
+                            float stepTransmittance = exp(-stepFade * stepSize);
+                            //float stepTransmittance = exp(-stepExtinction * actualStepSize);
+                            float stepAlpha = 1.0 - stepTransmittance;
+                            float lightTransmittance = LightMarch(currentPos, cloudLightDir);
+                           
+                            // mesh shadow on clouds
+                            float meshShadowOnCloud = GetSceneMeshShadow(currentPos);
+                            //smooth mesh shadow on clouds
+                            float3 meshShadowColor = lerp(_MeshShadowColor.rgb+ _AmbientLightIntensity, float3(1,1,1), meshShadowOnCloud);
+                            lightTransmittance *= meshShadowOnCloud;//dec light on shad
+                           
+                            //float3 cloudColorSample = lerp(_CloudShadowColor.rgb, _CloudColor.rgb, lightTransmittance);
+                            float3 cloudColorSample = lerp(_CloudShadowColor.rgb*meshShadowColor, _CloudColor.rgb * (1.0 + phase), lightTransmittance);//with silverLine
+                            accumulatedLight += cloudColorSample * stepAlpha * accumulatedTransmittance;
+                            accumulatedTransmittance *= stepTransmittance;
+
+                            if (accumulatedTransmittance < 0.01)
+                                break;
+                        }
+                        currentT += stepSize;
+                        //currentZ += stepZ;// for perpendicular
                     }
-                    currentT += stepSize;
-                    //currentZ += stepZ;// for perpendicular
+
+                    float totalTransmittance = saturate(accumulatedTransmittance);
+                    float3 finalColor = accumulatedLight + surfaceColor * totalTransmittance;
+
+                    output.color = float4(finalColor, sceneColor.a);
+                    output.depth = finalDepth;
                 }
 
-                float totalTransmittance = saturate(accumulatedTransmittance);
-                float3 finalColor = accumulatedLight + surfaceColor * totalTransmittance;
+                //float cloudVis = _DensityMultiplier-saturate(cloudAccumulatedDensity * _DensityMultiplier);//trans cloud accum dens to linear grayscale
+                //_DebugRaymarchDepth checkbox (onl raymarchDepth)
+                //if (_DebugCombined> 0.5)
+                //{                  
+                    if (hitRaymarchTerrain)
+                    {
+                        float linearDepth = Linear01Depth(raymarchOnlyDepth, _ZBufferParams);
+                        //output.color = float4(linearDepth, linearDepth, linearDepth, 1.0);
+                        float targetDepthColor = float4(linearDepth, linearDepth, linearDepth, 1.0);
+                        output.color = lerp(output.color, targetDepthColor, _DebugCombined);
+                        output.depth = raymarchOnlyDepth;
+                    //}else if(hitRaymarchCloud && cloudVis < 0.999){
+                    //    output.color = float4(cloudVis, cloudVis, cloudVis, 1.0);
+                    //    output.depth = finalDepth; 
+                    }
+                    else{//polygonal objects
+                        //output.color = _CutoutColor;
+                        output.depth = rawDepth;
+                    }
+                //}
+                //_DebugCombined checkbox (comb)
+                //else if (_DebugRaymarchDepth  > 0.5)
+                //{
+                    float linearDepth = Linear01Depth(finalDepth, _ZBufferParams);
 
-                output.color = float4(finalColor, sceneColor.a);
-                output.depth = finalDepth;
+                    //if(cloudVis < 0.999) {                        
+                    //        output.color = float4(cloudVis, cloudVis, cloudVis, 1.0);
+                    //        output.depth = finalDepth; 
+                    //}
+                    //else
+                    //{                     
+                        float targetDepthColor = float4(linearDepth, linearDepth, linearDepth, 1.0);
+                        //output.color = float4(linearDepth, linearDepth, linearDepth, 1.0);
+                        output.color =  lerp(output.color, targetDepthColor, _DebugRaymarchDepth);
+                        output.depth = finalDepth;
+                    //}
+                //}
                 return output;
             }
             ENDHLSL

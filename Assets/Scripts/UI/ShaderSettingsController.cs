@@ -25,7 +25,7 @@ public class ShaderSettingsController : MonoBehaviour, ISettingsWndService {
     [SerializeField] GameObject integerParamPrefab;
     [SerializeField] GameObject headerPrefab;
 
-    private ShaderPropertiesService _shaderPropService;
+    private IShaderPropertiesService _shaderPropService;
     private IShaderpassService _shaderPassService;
     private Dictionary<ShaderType, bool> _isSettingsParamsInited = new();
     private GameObject _currentOpenSettingsSubWindow = null;
@@ -35,7 +35,7 @@ public class ShaderSettingsController : MonoBehaviour, ISettingsWndService {
     //public event Action<ShaderType> OnShaderChanged;
 
     [Inject]
-    public void Construct(ShaderPropertiesService shaderPropService, IShaderpassService shaderPassService) {
+    public void Construct(IShaderPropertiesService shaderPropService, IShaderpassService shaderPassService) {
         _shaderPropService = shaderPropService;
         _shaderPassService = shaderPassService;
     }

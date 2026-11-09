@@ -1,25 +1,35 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Rendering;
+using VContainer;
 
 
-public class ShaderPropertiesService {
+public interface IShaderPropertiesService {
+    bool IsMaterialsNoAssigned { get; }
+    void InspectShaderProperties(ShaderType type);
+    void ResetPropertiesToDefault(ShaderType type);
+    Material GetMaterialByType(ShaderType type);
+    List<ShaderPropertyData> GetProperties(ShaderType type);
+}
+
+public class ShaderPropertiesService : IShaderPropertiesService {
     private readonly Material _terrainMaterial;
     private readonly Material _oceanMaterial;
     private readonly Material _spaceMaterial;
 
+    [Inject]
     public ShaderPropertiesService(Material spaceMaterial, Material oceanMaterial, Material terrainMaterial) {
         _terrainMaterial = terrainMaterial;
         _oceanMaterial = oceanMaterial;
         _spaceMaterial = spaceMaterial;
     }
 
-    public bool IsMaterialsNoAssigned() =>
+    public bool IsMaterialsNoAssigned =>
           _spaceMaterial == null || _terrainMaterial == null || _oceanMaterial == null
         || _oceanMaterial.shader == null || _spaceMaterial.shader == null || _terrainMaterial.shader == null;
 
     public void InspectShaderProperties(ShaderType type) {
-        if (type == ShaderType.None || IsMaterialsNoAssigned()) {
+        if (type == ShaderType.None || IsMaterialsNoAssigned) {
             Debug.LogError("No material or shader assigned!");
             return;
         }
@@ -70,7 +80,7 @@ public class ShaderPropertiesService {
     }
 
     public void ResetPropertiesToDefault(ShaderType type) {
-        if (type == ShaderType.None || IsMaterialsNoAssigned()) {
+        if (type == ShaderType.None || IsMaterialsNoAssigned) {
             Debug.LogError("No material or shader assigned!");
             return;
         }
@@ -118,7 +128,7 @@ public class ShaderPropertiesService {
         };
 
     public List<ShaderPropertyData> GetProperties(ShaderType type) {
-        if (type == ShaderType.None || IsMaterialsNoAssigned()) {
+        if (type == ShaderType.None || IsMaterialsNoAssigned) {
             Debug.LogError("No material or shader assigned!");
             return null;
         }

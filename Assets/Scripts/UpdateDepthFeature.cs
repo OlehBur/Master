@@ -6,32 +6,32 @@ using UnityEngine.Experimental.Rendering;
 
 public class UpdateDepthFeature : ScriptableRendererFeature {
     class UpdateDepthPass : ScriptableRenderPass {
-        private Material copyDepthMaterial;
+        private Material _copyDepthMaterial;
 
-        public UpdateDepthPass(RenderPassEvent evt) {
-            renderPassEvent = evt;
+        public UpdateDepthPass(RenderPassEvent rpe) {
+            renderPassEvent = rpe;
             Shader shader = Shader.Find("Hidden/Universal Render Pipeline/CopyDepth");
             if (shader != null) {
-                copyDepthMaterial = new Material(shader);
+                _copyDepthMaterial = new Material(shader);
             }
             else {
                 Debug.LogError("UpdateDepthFeature: Не знайдено шейдер копіювання глибини!");
             }
         }
 
-        class PassData {
+        class PassTxtrData {
             public TextureHandle sourceDepth;
             public TextureHandle destDepth;
-            public Material material;
+            public Material shaderMat;
             public TextureHandle colorTarget;
         }
 
-        public override void RecordRenderGraph(RenderGraph renderGraph, ContextContainer frameData) {
-            if (copyDepthMaterial == null)
+        public override void RecordRenderGraph(RenderGraph rg, ContextContainer cc) {
+            if (_copyDepthMaterial == null)
                 return;
 
-            UniversalResourceData resourceData = frameData.Get<UniversalResourceData>();
-            UniversalCameraData cameraData = frameData.Get<UniversalCameraData>();
+            UniversalResourceData resourceData = cc.Get<UniversalResourceData>();
+            UniversalCameraData cameraData = cc.Get<UniversalCameraData>();
 
             TextureHandle sourceDepth = resourceData.activeDepthTexture;
             if (!sourceDepth.IsValid())
@@ -46,67 +46,64 @@ public class UpdateDepthFeature : ScriptableRendererFeature {
                 clearBuffer = false
             };
 
-            TextureHandle copiedDepth = renderGraph.CreateTexture(desc);
+            TextureHandle copiedDepth = rg.CreateTexture(desc);
 
-            // --- ПРОХІД 1: Запис глибини у кастомну текстуру ---
-            using (var builder = renderGraph.AddRasterRenderPass<PassData>("Update Camera Depth - Write", out var passData)) {
+            // прохід Запису глибини у кастомну текстуру 
+            using (var builder = rg.AddRasterRenderPass<PassTxtrData>("Update Camera Depth - Write", out var passData)) {
                 passData.sourceDepth = sourceDepth;
                 passData.destDepth = copiedDepth;
-                passData.material = copyDepthMaterial;
+                passData.shaderMat = _copyDepthMaterial;
 
                 builder.UseTexture(sourceDepth, AccessFlags.Read);
                 builder.SetRenderAttachmentDepth(copiedDepth, AccessFlags.Write);
                 builder.AllowPassCulling(false);
 
-                builder.SetRenderFunc((PassData data, RasterGraphContext context) => {
-                    Blitter.BlitTexture(context.cmd, data.sourceDepth, new Vector4(1, 1, 0, 0), data.material, 0);
+                builder.SetRenderFunc((PassTxtrData data, RasterGraphContext context) => {
+                    Blitter.BlitTexture(context.cmd, data.sourceDepth, new Vector4(1, 1, 0, 0), data.shaderMat, 0);
                 });
             }
 
-            // --- ПРОХІД 2: Безпечне оновлення глобального стану (SetGlobalTexture) ---
-            using (var builder = renderGraph.AddRasterRenderPass<PassData>("Update Camera Depth - Set Global", out var passData)) {
+            // прохід Безпечного оновлення глобального стану текстури
+            using (var builder = rg.AddRasterRenderPass<PassTxtrData>("Update Camera Depth - Set Global", out var passData)) {
                 passData.destDepth = copiedDepth;
                 passData.colorTarget = resourceData.activeColorTexture;
 
-                // Оскільки текстура вже записана, тепер ми читаємо її безпечно
-                builder.UseTexture(copiedDepth, AccessFlags.Read);
-
-                // Використовуємо існуючий колірний буфер як легкий аттачмент, щоб прохід був валідним для raster-контексту
-                builder.SetRenderAttachment(resourceData.activeColorTexture, 0);
+                builder.UseTexture(copiedDepth, AccessFlags.Read);// текстура вже записана, чит. її безпечно
+                builder.SetRenderAttachment(resourceData.activeColorTexture, 0);//юз існуючого колір буферу
 
                 builder.AllowPassCulling(false);
                 builder.AllowGlobalStateModification(true);
 
-                builder.SetRenderFunc((PassData data, RasterGraphContext context) => {
+                builder.SetRenderFunc((PassTxtrData data, RasterGraphContext context) => {
                     context.cmd.SetGlobalTexture("_CameraDepthTexture", data.destDepth);
                 });
             }
         }
 
         public void Cleanup() {
-            if (copyDepthMaterial != null) {
-                CoreUtils.Destroy(copyDepthMaterial);
+            if (_copyDepthMaterial != null) {
+                CoreUtils.Destroy(_copyDepthMaterial);
             }
         }
     }
 
     [System.Serializable]
-    public class Settings {
-        public RenderPassEvent renderPassEvent = RenderPassEvent.AfterRenderingOpaques;
+    public class RenderPassSettings {
+        public RenderPassEvent RPE { get; } = RenderPassEvent.AfterRenderingOpaques;
     }
 
-    public Settings settings = new Settings();
+    public RenderPassSettings RendPassSett { get; } = new RenderPassSettings();
     UpdateDepthPass depthPass;
 
     public override void Create() {
-        depthPass = new UpdateDepthPass(settings.renderPassEvent);
+        depthPass = new UpdateDepthPass(RendPassSett.RPE);
     }
 
-    public override void AddRenderPasses(ScriptableRenderer renderer, ref RenderingData renderingData) {
-        renderer.EnqueuePass(depthPass);
+    public override void AddRenderPasses(ScriptableRenderer sr, ref RenderingData rd) {
+        sr.EnqueuePass(depthPass);
     }
 
-    protected override void Dispose(bool disposing) {
+    protected override void Dispose(bool isDispos) {
         depthPass?.Cleanup();
     }
 }

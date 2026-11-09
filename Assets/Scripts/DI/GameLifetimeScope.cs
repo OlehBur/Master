@@ -10,16 +10,29 @@ public class GameLifetimeScope : LifetimeScope {
     [SerializeField] Material terrainMaterial;
     [SerializeField] Material oceanMaterial;
     [SerializeField] Material spaceMaterial;
+    [SerializeField] Material polyDepthMaterial;
     [SerializeField] Transform shipParent;
 
 
     protected override void Configure(IContainerBuilder builder) {
-        //def scripts
-        builder.Register<ShaderpassService>(Lifetime.Singleton)
-               .WithParameter(rendererData)
-               .WithParameter(oceanMaterial)
-               .As<IShaderpassService>();
-        builder.Register<ShaderPropertiesService>(Lifetime.Singleton)
+        //init def params
+        builder.RegisterInstance(rendererData);
+        //builder.RegisterInstance(terrainMaterial);
+        //builder.RegisterInstance(oceanMaterial);
+        //builder.RegisterInstance(spaceMaterial);
+        //builder.RegisterInstance(polyDepthMaterial);
+
+        //entry points
+        builder.RegisterEntryPoint<AppManager>();
+
+        //services
+        builder.Register<IDepthPresentationService, DepthPresentationService>(Lifetime.Singleton)
+               .WithParameter("polyDepthMat", polyDepthMaterial)
+               .WithParameter("terrainCloudsMarch", terrainMaterial);
+        builder.Register<IShaderpassService, ShaderpassService>(Lifetime.Singleton)
+               //.WithParameter(rendererData)
+               .WithParameter(oceanMaterial);
+        builder.Register<IShaderPropertiesService, ShaderPropertiesService>(Lifetime.Singleton)
                 .WithParameter("terrainMaterial", terrainMaterial)
                 .WithParameter("oceanMaterial", oceanMaterial)
                 .WithParameter("spaceMaterial", spaceMaterial);
