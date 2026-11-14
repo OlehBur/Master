@@ -29,7 +29,7 @@ Material:
     - _CloudDensity: 0.5
     - _CloudMaxDistance: 350
     - _CloudScale: 0.0747
-    - _CloudSteps: 55.956356
+    - _CloudSteps: 35
     - _CloudWarp: 15.5
     - _Coverage: 1
     - _DensityMultiplier: 0.477
@@ -52,10 +52,10 @@ Material:
     - _MaxHeight: 90
     - _MinHeight: 65
     - _SceneShadowStrength: 0.581
-    - _SeaChoppy: 9.237775
+    - _SeaChoppy: 5.337
     - _SeaColorDepth: 50
-    - _SeaFreq: 0.14428727
-    - _SeaHeight: 0.64033306
+    - _SeaFreq: 0.1412
+    - _SeaHeight: 0.5
     - _SeaLevel: 25
     - _SeaMaxDistance: 400
     - _SeaMaxSteps: 80
@@ -79,7 +79,7 @@ Material:
     - _CloudShadowColor: {r: 0, g: 0.1477988, b: 0.4433962, a: 1}
     - _MeshShadowColor: {r: 0, g: 0.17, b: 0.45, a: 1}
     - _SeaBaseColor: {r: 0, g: 0.1, b: 0.25, a: 1}
-    - _SeaWaterColor: {r: 0, g: 0.8243242, b: 0.7797298, a: 1}
+    - _SeaWaterColor: {r: 0, g: 0.62, b: 0.65, a: 1}
     - _SunDir: {r: 0.5, g: 0.5, b: 0.5, a: 0}
     - _WaterColor: {r: 0.19999996, g: 0.5, b: 0.8, a: 1}
     - _WaterHighlight: {r: 0.8, g: 0.9, b: 1, a: 1}

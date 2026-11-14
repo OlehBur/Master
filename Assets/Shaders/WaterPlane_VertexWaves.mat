@@ -1,0 +1,42 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!21 &2100000
+Material:
+  serializedVersion: 8
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: WaterPlane_VertexWaves
+  m_Shader: {fileID: 4800000, guid: 71365d4e346acf844bc68c79bc9be922, type: 3}
+  m_Parent: {fileID: 0}
+  m_ModifiedSerializedProperties: 0
+  m_ValidKeywords: []
+  m_InvalidKeywords: []
+  m_LightmapFlags: 4
+  m_EnableInstancingVariants: 0
+  m_DoubleSidedGI: 0
+  m_CustomRenderQueue: -1
+  stringTagMap: {}
+  disabledShaderPasses: []
+  m_LockedProperties: 
+  m_SavedProperties:
+    serializedVersion: 3
+    m_TexEnvs: []
+    m_Ints: []
+    m_Floats:
+    - _SeaChoppy: 5.337
+    - _SeaColorDepth: 50
+    - _SeaFreq: 0.1412
+    - _SeaHeight: 0.5
+    - _SeaLevel: 25
+    - _SeaMaxDistance: 300
+    - _SeaSpeed: 0.76
+    - _SeaTransparency: 0.0151
+    - _SpecRoughness: 0.05
+    - _VertexOctaves: 2
+    m_Colors:
+    - _SeaBaseColor: {r: 0, g: 0.09999997, b: 0.24999997, a: 1}
+    - _SeaWaterColor: {r: 0, g: 0.62, b: 0.65, a: 1}
+  m_BuildTextureStacks: []
+  m_AllowLocking: 1

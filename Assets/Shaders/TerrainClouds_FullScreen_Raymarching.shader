@@ -7,11 +7,11 @@
         _Dithering ("Dithering Strength", Range(0, 1)) = 1.0
         _MeshShadowColor ("Mesh Shadow Tint Color", Color) = (0.0, 0.0859891, 0.3113208, 1.0)
         _AmbientLightIntensity ("Ambient Light Intensity", Range(0, 1)) = 0.234
-        //[Toggle]
-        _DebugRaymarchDepth ("Show Raymarch-Only Depth (Linear 0-1)", Range(0, 1)) = 0
-        //[Toggle] 
-        _DebugCombined ("Show Combined (Raymarch + Polygons) Linear01 Depth", Range(0, 1)) = 0
-        //_CutoutColor ("Depth Cutout / Background Color", Color) = (0.1, 0.1, 0.1, 1.0)
+        
+        _DepthAllAppear ("Depth All Appear", Range(0, 1)) = 0
+        _DepthPolyColoring ("Depth Poly Coloring", Range(0, 1)) = 0
+        _DepthRaymarchColoring ("Depth Raymarch Coloring", Range(0, 1)) = 0
+        _TerrainShadows ("Terrain Shadows & Shading", Range(0, 1)) = 0
 
         [HideInInspector] _Header_Clouds ("---{CLOUDS}---", Float) = 0
         [HideInInspector] _Header_ClMarch ("Clouds March", Float) = 0
@@ -104,9 +104,10 @@
             //general
             float4 _MeshShadowColor;
             float _AmbientLightIntensity;
-            float _DebugRaymarchDepth;
-            float _DebugCombined;
-            //float4 _CutoutColor;
+            float _DepthPolyColoring;
+            float _DepthAllAppear;
+            float _DepthRaymarchColoring;
+            float _TerrainShadows;
 
             // Terrain Params
             float _MountainHeight;
@@ -219,7 +220,7 @@
             
             bool RaymarchTerrain(float3 ro, float3 rd, float maxDist, float dither, out float3 hitPos, out float hitDist, out float octaveDetails)
             {
-                float t = dither * 2.0;
+                float t = max(dither * 2.0, _ProjectionParams.y); // not closer than near clip plane
                 float tPrev = t;
                 int steps = (int)_TerrainMaxSteps;
             
@@ -443,22 +444,27 @@
                 float raymarchOnlyDepth = rawDepth;
                 if (RaymarchTerrain(rayOrigin, rayDir, searchDist, dither, hitPos, terrainHitPos, octaveDetails))
                 {
-                    if (terrainHitPos < maxSceneDist)
+                    float4 hitClip = TransformWorldToHClip(hitPos);
+                    if (terrainHitPos < maxSceneDist && hitClip.w > _ProjectionParams.y)
                     {
                         hitRaymarchTerrain = true;
                         surfaceDist = terrainHitPos;
                         activeWorldPos = hitPos;
 
                         float3 normal = GetTerrainNormal(hitPos);
-                        float NdotL = saturate(dot(normal, normalize(mainLight.direction)));
+                        float NdotLraw = saturate(dot(normal, normalize(mainLight.direction)));
+                        float NdotL = lerp(1.0, NdotLraw, _TerrainShadows); // 1 = flat, no Lambert shading
 
                         // for mesh shadows on terrain
                         float4 shadowCoord = TransformWorldToShadowCoord(hitPos);
                         Light terrainMainLight = GetMainLight(shadowCoord);
                         float meshShadowOnTerrain = terrainMainLight.shadowAttenuation;
+                        
                         //mountain shadow on mountains
-                        if (NdotL > 0.001)
+                        if (NdotLraw > 0.001 && _TerrainShadows > 0.001)
                             meshShadowOnTerrain *= lerp(1.0, ComputeTerrainShadow(hitPos + normal * 0.5, rawLightDir, dither), _TerrainShadowStrength);
+                        // remove every shadow from terrain by slider
+                        meshShadowOnTerrain = lerp(1.0, meshShadowOnTerrain, _TerrainShadows);
 
                         float slope = normal.y;          // Slope: 1.0 = flat surface, 0.0 = sheer cliff               
                         float microNoise = Noise3D(hitPos * _NoiseColorScale);  //  Additional noise for procedural pain                      
@@ -490,13 +496,13 @@
                 // ==========================================
                 // shadow from terrain on the mesh surfaces 
                 // ==========================================
-                if (surfaceDist >= maxSceneDist && !isSkybox && maxSceneDist < _TerrainMaxDistance)
+                if (surfaceDist >= maxSceneDist && !isSkybox && maxSceneDist < _TerrainMaxDistance && _TerrainShadows > 0.001)
                 {
                     float ts = ComputeTerrainShadow(sceneWorldPos, rawLightDir, dither);
                 
                     //far from the camera mountains are no longer present - the shadow gradually disappears
                     float tsFade = 1.0 - smoothstep(_TerrainMaxDistance * 0.7, _TerrainMaxDistance, maxSceneDist);
-                    ts = lerp(1.0, ts, _TerrainShadowStrength * tsFade);
+                    ts = lerp(1.0, ts, _TerrainShadowStrength * tsFade * _TerrainShadows);
                 
                     // in the shadow, the mesh darkens to ambient + bluish tint (same as shadows from meshes on mountains)
                     float3 shadowTint = _AmbientLightIntensity + _MeshShadowColor.rgb * 0.5;
@@ -507,6 +513,10 @@
                 //Shadows from the clouds on the surface
                 // ==========================================
                 float cloudShadow = ComputeSoftSceneShadow(activeWorldPos, cloudLightDir, dither);                
+                if (!(hitRaymarchTerrain && _TerrainShadows < 0.001)) // skip march when its not needed
+                    cloudShadow = ComputeSoftSceneShadow(activeWorldPos, cloudLightDir, dither);                
+                if (hitRaymarchTerrain) cloudShadow = lerp(1.0, cloudShadow, _TerrainShadows); // slider: no cloud shadows on mountains
+                
                 cloudShadow = lerp(1.0, cloudShadow, shadowSunFade);// mult 1..0 for shadows as the sun approaches the horizon
                 surfaceColor = lerp(surfaceColor * _CloudShadowColor.rgb, surfaceColor, cloudShadow);
 
@@ -605,19 +615,21 @@
                     float3 finalColor = accumulatedLight + surfaceColor * totalTransmittance;
 
                     output.color = float4(finalColor, sceneColor.a);
+
                     output.depth = finalDepth;
                 }
 
                 //float cloudVis = _DensityMultiplier-saturate(cloudAccumulatedDensity * _DensityMultiplier);//trans cloud accum dens to linear grayscale
-                //_DebugRaymarchDepth checkbox (onl raymarchDepth)
-                //if (_DebugCombined> 0.5)
-                //{                  
+                //_DepthAllAppear checkbox (onl raymarchDepth)
+                //if (_DepthRaymarchColoring> 0.5)
+                //{    
                     if (hitRaymarchTerrain)
                     {
-                        float linearDepth = Linear01Depth(raymarchOnlyDepth, _ZBufferParams);
+                        float linearDepth =  saturate(Linear01Depth(raymarchOnlyDepth, _ZBufferParams));
                         //output.color = float4(linearDepth, linearDepth, linearDepth, 1.0);
                         float targetDepthColor = float4(linearDepth, linearDepth, linearDepth, 1.0);
-                        output.color = lerp(output.color, targetDepthColor, _DebugCombined);
+                        output.color = lerp(targetDepthColor, output.color, _DepthRaymarchColoring);
+
                         output.depth = raymarchOnlyDepth;
                     //}else if(hitRaymarchCloud && cloudVis < 0.999){
                     //    output.color = float4(cloudVis, cloudVis, cloudVis, 1.0);
@@ -625,13 +637,14 @@
                     }
                     else{//polygonal objects
                         //output.color = _CutoutColor;
+
                         output.depth = rawDepth;
                     }
                 //}
-                //_DebugCombined checkbox (comb)
-                //else if (_DebugRaymarchDepth  > 0.5)
+                //_DepthRaymarchColoring checkbox (comb)
+                //else if (_DepthAllAppear  > 0.5)
                 //{
-                    float linearDepth = Linear01Depth(finalDepth, _ZBufferParams);
+                    float linearDepth =  saturate(Linear01Depth(finalDepth, _ZBufferParams));
 
                     //if(cloudVis < 0.999) {                        
                     //        output.color = float4(cloudVis, cloudVis, cloudVis, 1.0);
@@ -641,10 +654,18 @@
                     //{                     
                         float targetDepthColor = float4(linearDepth, linearDepth, linearDepth, 1.0);
                         //output.color = float4(linearDepth, linearDepth, linearDepth, 1.0);
-                        output.color =  lerp(output.color, targetDepthColor, _DebugRaymarchDepth);
+                        output.color =  lerp(targetDepthColor, output.color, _DepthPolyColoring);
+                        output.color = lerp(sceneColor, output.color, _DepthAllAppear);
+
                         output.depth = finalDepth;
                     //}
                 //}
+
+                //bug light fix: when single NaN/Inf pixel turns into a big white blob after Bloom
+                if (any(!isfinite(output.color.rgb)))
+                    output.color = sceneColor;
+                output.color.rgb = min(output.color.rgb, 64.0);//clamp by 64
+
                 return output;
             }
             ENDHLSL

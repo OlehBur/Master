@@ -15,16 +15,16 @@ public class SpaceshipController : MonoBehaviour {
     [SerializeField] float pitchSpeed = 3f;         // mouse Y 
     [SerializeField] float yawSpeed = 1f;           // mouse X
     [SerializeField] float keyYawSpeed = 10f;
-    [SerializeField] float rollAmount = 55f;
+    [SerializeField] float rollAmount = 5f;
     [SerializeField] float rollSpeed = 1f;
 
     [Header("Damp phys")]//resistances
-    [SerializeField] float linearDrag = 200f;
-    [SerializeField] float angularDrag = 40f;
+    [SerializeField] float linearDrag = 2f;
+    [SerializeField] float angularDrag = 4f;
 
     [Header("Anim Transforms")]
-    [SerializeField] float propellersSpeed = 10f;
-    [SerializeField] float rotablesSpeed = 2f;
+    [SerializeField] float propellersSpeed = 500f;
+    [SerializeField] float rotablesSpeed = 100f;
     [SerializeField] Transform propellerL;
     [SerializeField] Transform propellerR;
     [SerializeField] Transform engineRotableL;

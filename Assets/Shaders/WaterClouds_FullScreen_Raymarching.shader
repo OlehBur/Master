@@ -50,7 +50,7 @@
         [HideInInspector] _Header_Clouds ("---{CLOUDS}---", Float) = 0
         [HideInInspector] _Header_ClMarch ("Clouds March", Float) = 0
         [Header(____________________________CLOUDS_______________________________)]        [Header(Cloud March)]
-        _CloudSteps ("Cloud March Steps", Range(16, 128)) = 35
+        _CloudSteps ("Cloud March Steps", Range(0, 128)) = 35
         _ShadowSteps ("Shadow March Steps", Range(1, 8)) = 2
         _CloudMaxDistance ("Cloud Fade Distance", Float) = 350.0
         _CloudScale ("Cloud Micro Scale", Range(0.0001, 0.1)) = 0.0747

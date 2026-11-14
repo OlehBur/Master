@@ -41,7 +41,7 @@ Material:
     - _Header_Planet: 0
     - _Header_Stars: 0
     - _Header_Sun: 0
-    - _LensingStrength: 2
+    - _LensingStrength: 0
     - _MaxRaySteps: 256
     - _NebulaIntensity: 1.429664
     - _NebulaScale: 3.5117624

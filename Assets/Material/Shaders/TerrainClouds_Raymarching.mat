@@ -27,18 +27,23 @@ Material:
     m_Ints: []
     m_Floats:
     - _AmbientLightIntensity: 0.234
-    - _CloudMaxDistance: 409.6
+    - _CloudMaxDistance: 300
     - _CloudScale: 0.0497
-    - _CloudSteps: 43.42099
+    - _CloudSteps: 44.493786
     - _CloudWarp: 1.5
     - _Coverage: 1
     - _DebugCloudDepth: 1
     - _DebugCombined: 0
     - _DebugCombinedDepth: 0
     - _DebugRaymarchDepth: 0
-    - _DensityMultiplier: 0.376
+    - _DensityMultiplier: 1
+    - _DepthAllAppear: 1
+    - _DepthAllColoring: 1
+    - _DepthPolyColoring: 1
+    - _DepthRaymarchColoring: 1
+    - _DepthRaymarchProg: 1
     - _DetailNoiseScale: 2
-    - _DetailNoiseStrength: 0.27406734
+    - _DetailNoiseStrength: 0.3314174
     - _Dithering: 1
     - _Header_ClLight: 0
     - _Header_ClMarch: 0
@@ -51,22 +56,24 @@ Material:
     - _Header_Terrain: 0
     - _LightAbsorption: 20
     - _MaxHeight: 120
-    - _MinHeight: 92.95
-    - _MountainHeight: 60
-    - _MountainScale: 0.012023812
-    - _NoiseColorScale: 3.64
+    - _MinHeight: 70
+    - _MountainHeight: 45
+    - _MountainScale: 0.013598215
+    - _NoiseColorScale: 3.6
     - _SceneShadowStrength: 1
     - _ShadowBlur: 3.4
     - _ShadowSteps: 3
     - _SilverLiningIntensity: 3.56
     - _SilverLiningSpread: 0.816
     - _SnowLine: 85.3
-    - _TerrainMaxDistance: 347.9
-    - _TerrainMaxSteps: 79.93764
+    - _TerrainMaxDistance: 300
+    - _TerrainMaxSteps: 58.232796
+    - _TerrainNoShadow: 0
     - _TerrainShadowSoftness: 15.6
     - _TerrainShadowSteps: 26
     - _TerrainShadowStrength: 1
-    - _TerrainWarp: 33.618984
+    - _TerrainShadows: 1
+    - _TerrainWarp: 18.37843
     - _WeatherScale: 0.0076
     m_Colors:
     - _BaseColor: {r: 0.52654725, g: 0.2262623, b: 0.3350622, a: 1}
